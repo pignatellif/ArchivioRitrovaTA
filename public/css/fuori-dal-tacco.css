@@ -1,0 +1,271 @@
+/* Stile generale */
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: "Lato", sans-serif;
+}
+
+/* ========== Contenitore Filtri ========== */
+.filter-container {
+    margin-top: 30px;
+    width: 1250px;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.filter-container .row {
+    display: flex;
+    width: 100%;
+    margin: 0;
+}
+
+.filter-container .col-md-3 {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-top: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* ========== Input Testuali ========== */
+.filter-container input.filter {
+    width: 100%;
+    font-size: 14px;
+    color: #fff;
+    background: #000;
+    border: none;
+    text-align: left;
+    height: 35px;
+    padding: 5px 8px;
+    box-sizing: border-box;
+}
+
+.filter-container input.filter::placeholder {
+    color: white;
+}
+
+.filter-container input.filter:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* ========== Slider ========== */
+.slider-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 5px; /* Distanza tra gli elementi */
+}
+
+/* Label degli slider */
+.slider-label {
+    font-size: 14px;
+    color: #fff;
+    min-width: 50px;
+    text-align: left;
+}
+
+/* Valori accanto agli slider */
+.slider-value {
+    font-size: 14px;
+    color: #fff;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Track slider */
+.slider-wrapper {
+    position: relative;
+    flex-grow: 1;
+    height: 4px;
+    background: #fff;
+    border-radius: 2px;
+    max-width: 150px;
+    display: flex;
+    align-items: center;
+}
+
+/* Slider */
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: transparent;
+    outline: none;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Track dello slider */
+.slider::-webkit-slider-runnable-track {
+    background: #fff;
+    height: 2px;
+    border-radius: 2px;
+}
+
+.slider::-moz-range-track {
+    background: #fff;
+    height: 2px;
+    border-radius: 2px;
+}
+
+/* Thumb degli slider */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    margin-top: -5px;
+}
+
+.slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+/* ========== Contenitore della griglia video ========== */
+.video-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-content: center;
+    align-items: start;
+    padding: 40px 2%;
+}
+
+/* ========== Stile delle card video ========== */
+.video-card {
+    width: 100%;
+    max-width: 100%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.video-card:hover {
+    transform: scale(1.03);
+    opacity: 0.9;
+}
+
+/* ========== Stile delle card ========== */
+.card {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+/* ========== Stile delle miniature video ========== */
+.video-thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* ========== Testi e tipografia ========== */
+.card-body {
+    padding: 10px;
+    text-align: left;
+    color: white;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+}
+
+/* ========== Messaggio quando non ci sono video ========== */
+.no-videos {
+    text-align: center;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 20px;
+}
+
+/* ========== Responsività ========== */
+@media (max-width: 768px) {
+    .video-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========== Paginazione ========== */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    gap: 8px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination-link {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #fff;
+    background: #333;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.pagination-link:hover {
+    background: #555;
+}
+
+.pagination .active .pagination-link {
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+}
+
+.pagination .disabled .pagination-link {
+    pointer-events: none;
+    background: #777;
+    opacity: 0.5;
+}
+
+/* ========== Stile della mappa ========== */
+#map {
+    height: 500px; /* Aumenta l'altezza per una migliore visibilità */
+    border: 3px solid #ffffff; /* Bordo definito */
+    border-radius: 10px; /* Arrotonda i bordi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Ombra elegante */
+}
