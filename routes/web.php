@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 // SEZIONI PRINCIPALI
 // ==========================
 Route::controller(SectionController::class)->group(function () {
-    Route::get('/home', 'home')->name('home');
+    Route::get('/', 'home')->name('home');
     Route::get('/video/{id}', 'video')->name('video.show');
     Route::get('/archivio', 'archivio')->name('archivio');
     Route::get('/serie', 'serie')->name('serie');
