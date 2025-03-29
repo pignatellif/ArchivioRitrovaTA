@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     var locations = JSON.parse(locationsElement.textContent); // Passa le locations dal PHP
     var map = L.map("map", {
         scrollWheelZoom: false, // Disabilita lo zoom con lo scroll
-    }).setView([41.1258, 16.8623], 8); // Centro sulla Puglia
+    }).setView([41.1258, 16.8623], 7); // Centro sulla Puglia
 
     // Aggiunge il layer della mappa (OpenStreetMap)
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

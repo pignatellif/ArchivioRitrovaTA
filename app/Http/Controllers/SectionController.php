@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Video;
 use App\Models\Series;
+use App\Models\Event;
 use Illuminate\Support\Facades\Log;
 
 class SectionController extends Controller
@@ -160,9 +161,20 @@ class SectionController extends Controller
         }
     }
     
-    public function eventi()
+    public function eventi(Request $request)
     {
-        return view('sections.eventi');
+        $query = $request->input('query');
+        $events = Event::query();
+    
+        if ($query) {
+            $events = $events->where('title', 'like', '%' . $query . '%')
+                             ->orWhere('description', 'like', '%' . $query . '%')
+                             ->orWhere('date', 'like', '%' . $query . '%');
+        }
+    
+        $events = $events->paginate(10);
+    
+        return view('sections.eventi', compact('events'));
     }
 
     public function sostienici()

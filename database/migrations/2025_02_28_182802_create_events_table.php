@@ -13,9 +13,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->date('date');
+            $table->string('cover_image')->nullable(); // Aggiunto il campo per la copertina
             $table->timestamps();
         });
-    }
+    }    
     
     public function down()
     {

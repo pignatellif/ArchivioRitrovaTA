@@ -40,6 +40,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('serie') }}">Serie</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('fuori_dal_tacco') }}">Fuori dal tacco</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('fuori_dal_frame') }}">Fuori dal frame</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('eventi') }}">Eventi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('sostienici') }}">Sostienici</a></li>
                 </ul>
             </div>
