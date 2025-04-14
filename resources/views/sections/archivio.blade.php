@@ -5,6 +5,15 @@
 @endpush
 
 @section('content')
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h2>Ogni pellicola è un ricordo che torna a parlare. </h2>
+            <hr class="border-light w-25 mx-auto my-3">
+            <p>Scopri i filmati che compongono la nostra memoria condivisa</p>
+        </div>
+    </section>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Sezione filtri -->
     <form id="filterForm" class="filter-container container">

@@ -5,6 +5,29 @@ body {
     font-family: "Lato", sans-serif;
 }
 
+/* ========== Hero section ========== */
+.hero-section {
+    height: 30vh;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-style: italic;
+    margin-top: 1rem;
+}
+
 /* ========== Contenitore Filtri ========== */
 .filter-container {
     margin-top: 30px;

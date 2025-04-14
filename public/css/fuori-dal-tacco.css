@@ -5,23 +5,67 @@ body {
     font-family: "Lato", sans-serif;
 }
 
-/* ========== Contenitore Filtri ========== */
-.filter-container {
-    margin-top: 30px;
-    width: 1250px;
-    background: #000;
-    color: #fff;
+/* ========== Hero section ========== */
+.hero-section {
+    height: 30vh;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 10px;
-    box-sizing: border-box;
+    text-align: center;
 }
 
-.filter-container .row {
-    display: flex;
-    width: 100%;
+.hero-content h1 {
+    font-size: 4rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+/* ========== Bottoni barra superiore (filtri, griglia, mappa) ========== */
+.top-buttons .btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    padding: 0 2%;
     margin: 0;
+    box-shadow: none;
+    transition: transform 0.2s ease;
+}
+
+.top-buttons .btn:hover {
+    transform: scale(1.1);
+    color: #ccc; /* Colore al passaggio del mouse */
+}
+
+.top-buttons .btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* ========== Contenitore Filtri ========== */
+#filterSidebar {
+    background-color: #000;
+    color: #fff;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* leggermente aumentato */
+    padding: 1rem 0.5rem;
+}
+
+.filter-row {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .filter-container .col-md-3 {
@@ -45,12 +89,11 @@ body {
     border: none;
     text-align: left;
     height: 35px;
-    padding: 5px 8px;
     box-sizing: border-box;
 }
 
 .filter-container input.filter::placeholder {
-    color: white;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .filter-container input.filter:focus {
@@ -71,7 +114,7 @@ body {
 .slider-label {
     font-size: 14px;
     color: #fff;
-    min-width: 50px;
+    min-width: 70px; /* aumentato da 50px */
     text-align: left;
 }
 
@@ -142,6 +185,51 @@ body {
     pointer-events: auto;
 }
 
+/* reset button */
+.reset-button {
+    color: white;
+    border: solid 1px #fff;
+    background: transparent;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+}
+
+.reset-button:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.reset-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.btn-clear-input {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 1.5rem;
+    z-index: 2;
+    padding: 0;
+    line-height: 1;
+}
+
+.btn-clear-input:hover {
+    color: #fff;
+}
+
 /* ========== Contenitore della griglia video ========== */
 .video-container {
     display: grid;
@@ -149,7 +237,7 @@ body {
     gap: 20px;
     justify-content: center;
     align-items: start;
-    padding: 40px 2%;
+    padding: 0px 2%;
 }
 
 /* ========== Stile delle card video ========== */
@@ -264,8 +352,19 @@ body {
 
 /* ========== Stile della mappa ========== */
 #map {
-    height: 500px; /* Aumenta l'altezza per una migliore visibilità */
+    height: 100vh;
     border: 3px solid #ffffff; /* Bordo definito */
     border-radius: 10px; /* Arrotonda i bordi */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Ombra elegante */
+}
+
+#videoContainer,
+#map {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#videoContainer.hidden,
+#map.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
