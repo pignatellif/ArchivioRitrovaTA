@@ -1,46 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const images = [
-        "/img/home/image1.png",
-        "/img/home/image2.png",
-        "/img/home/image3.png",
-        "/img/home/image4.png",
-    ]; // Percorsi delle immagini
+    // Blocca lo scroll inizialmente
+    document.body.style.overflow = "hidden";
 
-    let currentIndex = 0;
-    const bgCurrent = document.querySelector(".background-slider");
-    const bgNext = document.querySelector(".background-slider-next");
-    const ctaButton = document.querySelector(".cta-button");
-    const sections = document.querySelectorAll(".section");
+    // Seleziona il bottone della hero section
+    const heroButton = document.querySelector(".hero-button");
 
-    const changeBackground = () => {
-        bgNext.style.backgroundImage = `url('${images[currentIndex]}')`;
-        bgNext.style.opacity = 1;
+    // Aggiungi un evento click al bottone
+    if (heroButton) {
+        heroButton.addEventListener("click", (event) => {
+            event.preventDefault(); // Previene il comportamento predefinito del link
 
-        setTimeout(() => {
-            bgCurrent.style.backgroundImage = `url('${images[currentIndex]}')`;
-            bgNext.style.opacity = 0;
-            currentIndex = (currentIndex + 1) % images.length;
-        }, 2000);
-    };
+            // Sblocca lo scroll
+            document.body.style.overflow = "";
 
-    setInterval(changeBackground, 5000);
-    changeBackground();
-
-    ctaButton.addEventListener("click", () => {
-        document.body.style.overflow = "auto"; // Sblocca lo scroll
-        document.documentElement.style.scrollBehavior = "smooth"; // Effetto scroll morbido
-    });
-
-    const revealSections = () => {
-        sections.forEach((section) => {
-            const sectionTop = section.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-
-            if (sectionTop < windowHeight - 100) {
-                section.classList.add("show");
+            // Scorri fino alla sezione di benvenuto
+            const welcomeSection = document.querySelector("#welcome-section");
+            if (welcomeSection) {
+                welcomeSection.scrollIntoView({ behavior: "smooth" });
             }
         });
-    };
-
-    window.addEventListener("scroll", revealSections);
+    }
 });

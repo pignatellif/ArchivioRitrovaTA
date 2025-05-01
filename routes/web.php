@@ -23,6 +23,9 @@ Route::controller(SectionController::class)->group(function () {
     Route::get('/fuori-dal-tacco', 'fuoriDalTacco')->name('fuori_dal_tacco');
     Route::get('/eventi', 'eventi')->name('eventi');
     Route::get('/sostienici', 'sostienici')->name('sostienici');
+    Route::get('/chi-siamo', 'info')->name('chi_siamo');
+    Route::get('/fuori-dal-frame/registi', 'registi')->name('registi');
+    Route::get('/fuori-dal-frame/personaggi', 'personaggi')->name('personaggi');
 });
 
 

@@ -11,8 +11,8 @@
     <!-- HERO SECTION -->
     <section class="hero-section">
         <div class="hero-content">
-            <h3>Storie in viaggio, memorie oltre la Puglia.</h3>
-            <hr class="border-light w-25 mx-auto my-3">
+            <h1>Storie in viaggio, memorie oltre la Puglia.</h1>
+            <hr class="hero-divider">
             <p>Una raccolta di filmini girati in altre regioni d’Italia e del mondo. Perché la memoria non ha confini, e ogni sguardo racconta un altrove.</p>
         </div>
     </section>
@@ -39,7 +39,7 @@
         <!-- Sidebar a Comparsa -->
         <div class="offcanvas offcanvas-start" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
             <div class="offcanvas-header">
-                <h3 class="offcanvas-title" id="filterSidebarLabel">Filtr</h3>
+                <h3 class="offcanvas-title" id="filterSidebarLabel">Filtri</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
@@ -81,10 +81,12 @@
                             <div class="slider-container">
                                 <span class="slider-label">Regista</span>
                                 <div class="input-wrapper">
-                                    <input type="text" class="form-control filter" id="filterAuthor" placeholder="Inserisci un regista">
-                                    <button type="button" class="btn btn-clear-input d-none" data-target="#filterAuthor">
-                                        <i class="fa-sharp fa-solid fa-xmark"></i>
-                                    </button>
+                                    <select class="form-control filter" id="filterAuthor">
+                                        <option value="">Tutti</option>
+                                        @foreach($authors as $author)
+                                            <option value="{{ $author }}">{{ $author }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -101,6 +103,57 @@
                                     <input type="range" min="{{ $minDuration }}" max="{{ $maxDuration }}" value="{{ $maxDuration }}" class="slider" id="durationSlider2">
                                 </div>
                                 <span id="durationValue2" class="slider-value">{{ $maxDuration }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-row">
+                        <!-- Filtro Formato -->
+                        <div class="mb-3">
+                            <div class="slider-container">
+                                <span class="slider-label">Formato</span>
+                                <div class="input-wrapper">
+                                    <select class="form-control filter" id="filterFormat">
+                                        <option value="">Tutti</option>
+                                        @foreach($formats as $format)
+                                            <option value="{{ $format }}">{{ $format }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <!-- Filtro Famiglia -->
+                        <div class="mb-3">
+                            <div class="slider-container">
+                                <span class="slider-label">Famiglia</span>
+                                <div class="input-wrapper">
+                                    <select class="form-control filter" id="filterFamily">
+                                        <option value="">Tutti</option>
+                                        @foreach($families as $family)
+                                            <option value="{{ $family }}">{{ $family }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <!-- Filtro Luogo -->
+                        <div class="mb-3">
+                            <div class="slider-container">
+                                <span class="slider-label">Luogo</span>
+                                <div class="input-wrapper">
+                                    <select class="form-control filter" id="filterLocation">
+                                        <option value="">Tutti</option>
+                                        @foreach($locations as $location)
+                                            <option value="{{ $location }}">{{ $location }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>

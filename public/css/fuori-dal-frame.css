@@ -1,0 +1,51 @@
+body {
+    background-color: #e5e5e5;
+    color: #14213d;
+}
+
+/* ========== Hero section ========== */
+.hero-section {
+    height: 30vh;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    color: #14213d;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    color: #14213d;
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+.hero-divider {
+    position: relative;
+    width: 70%;
+    height: 2px;
+    background-color: #14213d;
+    margin: 1rem auto;
+}
+
+/* ========== Button styles ========== */
+.section-btn {
+    color: #14213d;
+    border: solid 1px #14213d;
+    background: transparent;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+}
+
+.section-btn:hover {
+    background-color: #14213d;
+    color: #e5e5e5;
+}

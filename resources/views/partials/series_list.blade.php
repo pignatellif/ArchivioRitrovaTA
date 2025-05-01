@@ -1,7 +1,6 @@
 @foreach($series as $serie)
     <h2 class="series-title">{{ $serie->name }}</h2>
     
-    
     <div class="wrapper mb-4">
         <div class="carousel" id="carousel-{{ $loop->index }}">
             <button class="arrow__btn left-arrow" aria-label="Previous">‹</button>

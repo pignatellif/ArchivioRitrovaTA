@@ -1,0 +1,217 @@
+/* ================= VARIABLES ================= */
+:root {
+    /* Font per testi principali */
+    --font-primary: "Roboto", sans-serif;
+
+    /* Font per titoli */
+    --font-secondary: "Cinzel", serif;
+
+    /* Font per citazioni */
+    --font-special: "Special Elite", cursive;
+
+    --transition-default: 0.3s ease;
+}
+
+/* ================= RESET & BASE ================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+
+    /* Font base e colori */
+    font-family: "Roboto", sans-serif;
+    background-color: #ffffff;
+    color: #14213d;
+}
+
+body {
+    /* Layout flex per struttura verticale */
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    /* Espande il contenuto principale */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================= TYPOGRAPHY ================= */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand,
+.footer-links a {
+    font-family: "Cinzel", serif;
+}
+
+body,
+p,
+li,
+a,
+.nav-link {
+    font-family: "Roboto", sans-serif;
+}
+
+blockquote,
+.citazione,
+.quote {
+    /* Font speciale per citazioni */
+    font-family: "Special Elite", cursive;
+}
+
+/* ================= UTILITY CLASSES ================= */
+.text-accent {
+    color: #fca311;
+}
+
+.bg-dark-blue {
+    background-color: #14213d;
+}
+
+.bg-light-gray {
+    background-color: #e5e5e5;
+}
+
+.bg-black {
+    background-color: #000000;
+}
+
+.btn-primary {
+    background-color: #fca311;
+    color: #000000;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #14213d;
+    color: #ffffff;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+    background-color: #ffffff;
+    color: #14213d;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #14213d;
+    transition: 0.3s ease;
+    position: relative;
+}
+
+.navbar-dark .navbar-nav .nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    background: #14213d;
+    transition: width 0.3s ease;
+    bottom: -5px;
+    left: 0;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #000000;
+}
+
+.navbar-brand img {
+    height: 50px;
+}
+
+.navbar-toggler {
+    border-color: rgba(20, 33, 61, 0.1);
+}
+
+.navbar-toggler-icon {
+    color: #14213d;
+}
+
+/* ================= FOOTER ================= */
+footer {
+    background-color: #000000;
+    color: #bbb;
+    text-align: center;
+    padding: 40px 20px;
+    font-family: "Cinzel", serif;
+    font-size: 14px;
+}
+
+.footer-container {
+    max-width: 100vw;
+    margin: 0 auto;
+}
+
+.copyright {
+    font-size: 13px;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-links li {
+    display: inline;
+}
+
+.footer-links a {
+    color: #bbb;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.social-links {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-links li {
+    display: inline;
+}
+
+.social-links a {
+    color: #bbb;
+    font-size: 18px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}

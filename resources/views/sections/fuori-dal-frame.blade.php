@@ -1,34 +1,41 @@
 @extends('layouts.app')
 
-@section('title', 'Fuori dal Frame')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/fuori-dal-frame.css') }}">
+@endpush
 
 @section('content')
-<div class="max-w-5xl mx-auto p-6">
     <!-- HERO SECTION -->
     <section class="hero-section">
         <div class="hero-content">
-            <h1>Fuori dal frame</h1>
-            <hr class="border-light w-25 mx-auto my-3">
-            <p>"Mini-interviste autentiche ai protagonisti dei filmati dell’archivio. <br>
-            Storie personali, ricordi vivi, emozioni sussurrate che completano ciò che la pellicola non dice."</p>
+            <h1>Le voci dietro le immagini.</h1>
+            <hr class="hero-divider">
+            <p>Mini-interviste autentiche ai protagonisti dei filmati dell’archivio. Storie personali, ricordi vivi, emozioni sussurrate che completano ciò che la pellicola non dice.</p>
         </div>
     </section>
     
-    @if($videoList->isEmpty())
-        <p class="text-gray-600">Nessun video disponibile con il tag "fuori dal frame".</p>
-    @else
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach($videoList as $video)
-                <div class="bg-white rounded-lg shadow p-4">
-                    <h2 class="text-xl font-semibold mb-2">{{ $video->titolo }}</h2>
-                    <p class="text-sm text-gray-500 mb-2">{{ $video->descrizione }}</p>
-                    <div class="aspect-video mb-4">
-                        <iframe class="w-full h-full rounded" src="{{ $video->url }}" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <p class="text-sm text-gray-400">Tag: {{ implode(', ', $video->tags) }}</p>
+    <!-- AUTHORS AND CHARACTERS SECTION -->
+    <section class="intro-section">
+        <div class="container">
+            <div class="row">
+                <!-- Authors Column -->
+                <div class="col-md-6">
+                    <h2>Gli Autori</h2>
+                    <p>Scopri chi ha reso possibile tutto questo. Gli autori sono le menti creative e i narratori che hanno dato vita a queste storie uniche.</p>
+                    <a href="{{ route ('personaggi') }}" class="btn section-btn">Scopri gli Autori</a>
                 </div>
-            @endforeach
+                <!-- Characters Column -->
+                <div class="col-md-6">
+                    <h2>I Personaggi</h2>
+                    <p>Conosci i protagonisti dei filmati. Le loro storie, i loro ricordi e le loro emozioni sono il cuore pulsante di questo archivio.</p>
+                    <a href="{{ route ('personaggi') }}" class="btn section-btn">Scopri i Personaggi</a>
+                </div>
+            </div>
         </div>
-    @endif
-</div>
+    </section>
+@endsection
+
+@section('scripts')
+    <!-- Aggiunta dei file JS -->
+    <script src="{{ asset('js/fuori-dal-frame.js') }}"></script>
 @endsection

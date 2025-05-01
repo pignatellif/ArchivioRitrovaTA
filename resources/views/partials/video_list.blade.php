@@ -14,7 +14,7 @@
             </a>
             <div class="card-body">
                 <h5 class="card-title">{{ $video->title }}</h5>
-                <p class="card-text">{{ $video->author }}, {{ $video->year }}, {{ gmdate('i:s', $video->duration) }}</p>
+                <p class="card-text">{{ $video->author }}, {{ $video->year }}, {{ gmdate('i:s', $video->duration) }}, {{ $video->location }}</p>
             </div>
         </div>
     </div>

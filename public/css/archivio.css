@@ -1,8 +1,7 @@
 /* Stile generale */
 body {
-    background-color: #000;
-    color: #fff;
-    font-family: "Lato", sans-serif;
+    background-color: #e5e5e5;
+    color: #14213d;
 }
 
 /* ========== Hero section ========== */
@@ -16,35 +15,63 @@ body {
 }
 
 .hero-content h1 {
-    font-size: 4rem;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    font-size: 2.5rem;
+    color: #14213d;
 }
 
 .hero-content p {
-    font-size: 1.3rem;
-    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    color: #14213d;
     font-style: italic;
     margin-top: 1rem;
 }
 
-/* ========== Contenitore Filtri ========== */
-.filter-container {
-    margin-top: 30px;
-    width: 1250px;
-    background: #000;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    box-sizing: border-box;
+.hero-divider {
+    position: relative;
+    width: 70%;
+    height: 2px;
+    background-color: #14213d;
+    margin: 1rem auto;
 }
 
-.filter-container .row {
-    display: flex;
-    width: 100%;
+/* ========== Bottoni barra superiore (filtri, griglia, mappa) ========== */
+.top-buttons .btn {
+    background: transparent;
+    border: none;
+    color: #14213d;
+    font-size: 1.5rem;
+    padding: 0 2%;
     margin: 0;
+    box-shadow: none;
+    transition: transform 0.2s ease;
+}
+
+.top-buttons .btn:hover {
+    transform: scale(1.1);
+    color: #fca311; /* Colore al passaggio del mouse */
+}
+
+.top-buttons .btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* ========== Contenitore Filtri ========== */
+#filterSidebar {
+    background-color: #14213d;
+    color: #ffffff;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* leggermente aumentato */
+    padding: 1rem 0.5rem;
+}
+
+.filter-row {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .filter-container .col-md-3 {
@@ -63,20 +90,48 @@ body {
 .filter-container input.filter {
     width: 100%;
     font-size: 14px;
-    color: #fff;
-    background: #000;
+    color: #ffffff;
+    background: #14213d;
     border: none;
     text-align: left;
     height: 35px;
-    padding: 5px 8px;
     box-sizing: border-box;
 }
 
 .filter-container input.filter::placeholder {
-    color: white;
+    color: rgba(229, 229, 229, 0.5);
 }
 
 .filter-container input.filter:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* ========== Input Selettivi ========== */
+.filter-container select.filter {
+    width: 100%;
+    font-size: 14px;
+    color: #ffffff;
+    background: #14213d;
+    border: none;
+    text-align: left;
+    height: 35px;
+    box-sizing: border-box;
+}
+
+/* Stile per il select con freccia verso il basso in bianco */
+select.form-control.filter {
+    appearance: none; /* Rimuove lo stile predefinito del browser */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 30px; /* Spazio per la freccia */
+    cursor: pointer;
+}
+
+.filter-container select.filter:focus {
     outline: none;
     box-shadow: none;
     border: none;
@@ -93,15 +148,15 @@ body {
 /* Label degli slider */
 .slider-label {
     font-size: 14px;
-    color: #fff;
-    min-width: 50px;
+    color: #ffffff;
+    min-width: 70px; /* aumentato da 50px */
     text-align: left;
 }
 
 /* Valori accanto agli slider */
 .slider-value {
     font-size: 14px;
-    color: #fff;
+    color: #ffffff;
     min-width: 40px;
     text-align: center;
 }
@@ -111,7 +166,7 @@ body {
     position: relative;
     flex-grow: 1;
     height: 4px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 2px;
     max-width: 150px;
     display: flex;
@@ -133,13 +188,13 @@ body {
 
 /* Track dello slider */
 .slider::-webkit-slider-runnable-track {
-    background: #fff;
+    background: #ffffff;
     height: 2px;
     border-radius: 2px;
 }
 
 .slider::-moz-range-track {
-    background: #fff;
+    background: #ffffff;
     height: 2px;
     border-radius: 2px;
 }
@@ -149,7 +204,7 @@ body {
     -webkit-appearance: none;
     width: 10px;
     height: 10px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto;
@@ -159,26 +214,72 @@ body {
 .slider::-moz-range-thumb {
     width: 10px;
     height: 10px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto;
 }
 
+/* reset button */
+.reset-button {
+    color: #ffffff;
+    border: solid 1px #ffffff;
+    background: transparent;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+}
+
+.reset-button:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.reset-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.btn-clear-input {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 1.5rem;
+    z-index: 2;
+    padding: 0;
+    line-height: 1;
+}
+
+.btn-clear-input:hover {
+    color: #fff;
+}
+
 /* ========== Contenitore della griglia video ========== */
 .video-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     justify-content: center;
     align-items: start;
-    padding: 40px 2%;
+    padding: 0px 2%;
 }
 
 /* ========== Stile delle card video ========== */
 .video-card {
     width: 100%;
     max-width: 100%;
+    height: auto;
     transition: transform 0.3s ease, opacity 0.3s ease;
     cursor: pointer;
 }
@@ -215,14 +316,13 @@ body {
 .card-title {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #fff;
+    color: #003049;
     text-transform: uppercase;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .card-text {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 48, 73, 0.8);
     line-height: 1.4;
 }
 
@@ -283,4 +383,23 @@ body {
     pointer-events: none;
     background: #777;
     opacity: 0.5;
+}
+
+/* ========== Stile della mappa ========== */
+#map {
+    height: 100vh;
+    border: 3px solid #14213d; /* Bordo definito */
+    border-radius: 10px; /* Arrotonda i bordi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Ombra elegante */
+}
+
+#videoContainer,
+#map {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#videoContainer.hidden,
+#map.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
