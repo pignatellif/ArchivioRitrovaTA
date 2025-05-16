@@ -1,65 +1,123 @@
-/* Stile generale */
 body {
-    background-color: #e5e5e5;
-    color: #14213d;
+    background-color: #fdf0d5;
+    color: #003049;
+    margin: 0;
+    padding: 0;
 }
 
-/* ========== Hero section ========== */
+.section-divider {
+    width: 100%;
+    height: 3px;
+    background-color: #003049;
+}
+
+/* sezione iniziale */
 .hero-section {
-    height: 30vh;
-    background: transparent;
+    width: 100vw;
+    height: 35vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 3rem 1rem;
+    background-color: #fdf0d5;
+    color: #003049;
     text-align: center;
 }
 
-.hero-content h1 {
+.hero-section h2 {
     font-size: 2.5rem;
-    color: #14213d;
+    margin-bottom: 1.5rem;
+    color: #003049;
 }
 
-.hero-content p {
-    font-size: 1.1rem;
-    color: #14213d;
-    font-style: italic;
-    margin-top: 1rem;
+.hero-section p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #003049;
 }
 
-.hero-divider {
-    position: relative;
-    width: 70%;
-    height: 2px;
-    background-color: #14213d;
-    margin: 1rem auto;
+@media (max-width: 768px) {
+    .hero-section {
+        height: auto;
+        padding: 2rem 1rem;
+    }
+
+    .hero-section h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+    }
 }
 
-/* ========== Bottoni barra superiore (filtri, griglia, mappa) ========== */
-.top-buttons .btn {
-    background: transparent;
-    border: none;
-    color: #14213d;
-    font-size: 1.5rem;
-    padding: 0 2%;
-    margin: 0;
-    box-shadow: none;
-    transition: transform 0.2s ease;
+@media (max-width: 480px) {
+    .hero-section h2 {
+        font-size: 0.8rem;
+    }
+
+    .hero-section p {
+        font-size: 0.4rem;
+        line-height: 1.6;
+    }
 }
 
-.top-buttons .btn:hover {
-    transform: scale(1.1);
-    color: #fca311; /* Colore al passaggio del mouse */
+/* sezione controlli */
+.control-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 3rem;
 }
 
-.top-buttons .btn:focus {
-    outline: none;
-    box-shadow: none;
+.control-container .btn {
+    border-color: #c1121f;
+    color: #c1121f;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.control-container .btn:hover {
+    background-color: #780000;
+    color: #ffffff;
+}
+
+.control-container .btn-check:checked + .btn {
+    background-color: #780000;
+    color: #ffffff;
+    border-color: #780000;
+}
+
+@media (max-width: 768px) {
+    .control-container {
+        padding: 1rem 3rem;
+        gap: 0.5rem;
+    }
+
+    .control-container .btn {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-container {
+        padding: 1rem 3rem;
+    }
+
+    .control-container .btn {
+        font-size: 0.9rem;
+        padding: 0.35rem 0.7rem;
+    }
 }
 
 /* ========== Contenitore Filtri ========== */
 #filterSidebar {
-    background-color: #14213d;
-    color: #ffffff;
+    background-color: #fdf0d5;
+    color: #003049;
 }
 
 .filter-container {
@@ -71,7 +129,7 @@ body {
 
 .filter-row {
     margin-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(0, 48, 73, 0.7);
 }
 
 .filter-container .col-md-3 {
@@ -80,7 +138,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 48, 73, 0.7);
     border-top: none;
     min-width: 0;
     box-sizing: border-box;
@@ -90,8 +148,8 @@ body {
 .filter-container input.filter {
     width: 100%;
     font-size: 14px;
-    color: #ffffff;
-    background: #14213d;
+    color: #003049;
+    background: #fdf0d5;
     border: none;
     text-align: left;
     height: 35px;
@@ -99,7 +157,7 @@ body {
 }
 
 .filter-container input.filter::placeholder {
-    color: rgba(229, 229, 229, 0.5);
+    color: rgba(0, 48, 73, 0.5);
 }
 
 .filter-container input.filter:focus {
@@ -112,29 +170,109 @@ body {
 .filter-container select.filter {
     width: 100%;
     font-size: 14px;
-    color: #ffffff;
-    background: #14213d;
+    color: #003049;
+    background: #fdf0d5;
     border: none;
     text-align: left;
     height: 35px;
     box-sizing: border-box;
-}
-
-/* Stile per il select con freccia verso il basso in bianco */
-select.form-control.filter {
-    appearance: none; /* Rimuove lo stile predefinito del browser */
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 16px;
-    padding-right: 30px; /* Spazio per la freccia */
+    position: relative;
+    padding-right: 20px;
     cursor: pointer;
 }
 
-.filter-container select.filter:focus {
+/* Wrapper per l'icona */
+.filter-container .select-wrapper {
+    position: relative;
+}
+
+.filter-container .select-wrapper select.filter {
+    appearance: none;
+    background: none;
+}
+
+/* Icona personalizzata */
+.filter-container .select-wrapper .fa-caret-down {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #003049;
+}
+
+/* ========== Check box ========== */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+/* Stile collassabile */
+.collapse {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.checkbox-group .form-check {
+    margin-right: 10px;
+    width: auto;
+}
+
+/* Bottone collassabile stile professionale */
+.slider-label button {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+}
+
+/* Personalizzazione delle checkbox visibili */
+.form-check-input {
+    width: 15px;
+    height: 15px;
+    border: 1px solid #c1121f;
+    background-color: #fdf0d5;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Quando la checkbox è selezionata, cambia il colore di sfondo */
+.form-check-input:checked {
+    background-color: #780000;
+    border-color: #780000;
+}
+
+/* Cambia il colore del segno di spunta quando selezionato */
+.form-check-input:checked::after {
+    position: absolute;
+    font-size: 14px;
+    color: white;
+}
+
+/* Aggiungere un bordo con un effetto hover */
+.form-check-input:hover {
+    border-color: #c1121f;
+}
+
+/* Stile del label associato alla checkbox */
+.form-check-label {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Aggiungere uno pseudo-elemento per creare un simbolo personalizzato prima del label */
+.form-check-input:checked + .form-check-label::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 16px;
+    color: #c1121f;
+    font-weight: bold;
+}
+
+/* Rimuovi il bordo celeste di focus dalla checkbox */
+.form-check-input:focus {
     outline: none;
-    box-shadow: none;
-    border: none;
+    box-shadow: none; /* Rimuove anche l'effetto di ombra, se presente */
 }
 
 /* ========== Slider ========== */
@@ -148,7 +286,7 @@ select.form-control.filter {
 /* Label degli slider */
 .slider-label {
     font-size: 14px;
-    color: #ffffff;
+    color: #003049;
     min-width: 70px; /* aumentato da 50px */
     text-align: left;
 }
@@ -156,7 +294,7 @@ select.form-control.filter {
 /* Valori accanto agli slider */
 .slider-value {
     font-size: 14px;
-    color: #ffffff;
+    color: #003049;
     min-width: 40px;
     text-align: center;
 }
@@ -166,11 +304,20 @@ select.form-control.filter {
     position: relative;
     flex-grow: 1;
     height: 4px;
-    background: #ffffff;
+    background: #003049;
     border-radius: 2px;
     max-width: 150px;
     display: flex;
     align-items: center;
+}
+
+.toggle-button {
+    border: 1px solid #003049;
+    background-color: transparent;
+    color: #003049;
+    width: 100%;
+    height: auto;
+    padding: 5px 5px;
 }
 
 /* Slider */
@@ -188,13 +335,13 @@ select.form-control.filter {
 
 /* Track dello slider */
 .slider::-webkit-slider-runnable-track {
-    background: #ffffff;
+    background: #003049;
     height: 2px;
     border-radius: 2px;
 }
 
 .slider::-moz-range-track {
-    background: #ffffff;
+    background: #003049;
     height: 2px;
     border-radius: 2px;
 }
@@ -204,7 +351,7 @@ select.form-control.filter {
     -webkit-appearance: none;
     width: 10px;
     height: 10px;
-    background: #ffffff;
+    background: #003049;
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto;
@@ -214,7 +361,7 @@ select.form-control.filter {
 .slider::-moz-range-thumb {
     width: 10px;
     height: 10px;
-    background: #ffffff;
+    background: #003049;
     border-radius: 50%;
     cursor: pointer;
     pointer-events: auto;
@@ -222,19 +369,18 @@ select.form-control.filter {
 
 /* reset button */
 .reset-button {
-    color: #ffffff;
-    border: solid 1px #ffffff;
+    color: #c1121f;
+    border: solid 1px #c1121f;
     background: transparent;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    border-radius: 50px;
     transition: background-color 0.3s ease;
 }
 
 .reset-button:hover {
-    background-color: #fff;
-    color: #000;
+    background-color: #780000;
+    color: #ffffff;
 }
 
 .reset-button:focus {
@@ -262,20 +408,20 @@ select.form-control.filter {
 }
 
 .btn-clear-input:hover {
-    color: #fff;
+    color: #003049;
 }
 
-/* ========== Contenitore della griglia video ========== */
+/* video */
 .video-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     justify-content: center;
     align-items: start;
-    padding: 0px 2%;
+    background-color: #fdf0d5;
+    padding: 1rem 3rem;
 }
 
-/* ========== Stile delle card video ========== */
 .video-card {
     width: 100%;
     max-width: 100%;
@@ -284,12 +430,10 @@ select.form-control.filter {
     cursor: pointer;
 }
 
-.video-card:hover {
-    transform: scale(1.03);
-    opacity: 0.9;
+.video-card:hover .video-thumbnail {
+    transform: scale(1.05);
 }
 
-/* ========== Stile delle card ========== */
 .card {
     background: none;
     border: none;
@@ -298,7 +442,6 @@ select.form-control.filter {
     overflow: hidden;
 }
 
-/* ========== Stile delle miniature video ========== */
 .video-thumbnail {
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -306,7 +449,6 @@ select.form-control.filter {
     transition: transform 0.5s ease-in-out;
 }
 
-/* ========== Testi e tipografia ========== */
 .card-body {
     padding: 10px;
     text-align: left;
@@ -326,7 +468,31 @@ select.form-control.filter {
     line-height: 1.4;
 }
 
-/* ========== Messaggio quando non ci sono video ========== */
+/* tags */
+.custom-tag {
+    background-color: #c1121f;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    border-radius: 5px;
+    font-weight: 500;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.custom-tag:hover {
+    background-color: #780000;
+    cursor: pointer;
+}
+
+.tags {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
 .no-videos {
     text-align: center;
     font-size: 1.2rem;
@@ -334,7 +500,12 @@ select.form-control.filter {
     margin-top: 20px;
 }
 
-/* ========== Responsività ========== */
+@media (max-width: 1200px) {
+    .video-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .video-container {
         grid-template-columns: 1fr;
@@ -345,52 +516,69 @@ select.form-control.filter {
 .pagination-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    background-color: #fdf0d5;
+    padding: 2rem 0;
 }
 
 .pagination {
     display: flex;
     list-style: none;
-    padding: 0;
-    gap: 8px;
+    padding-left: 0;
+    gap: 0.25rem;
 }
 
-.pagination li {
-    display: inline-block;
-}
-
-.pagination-link {
-    display: block;
-    padding: 8px 12px;
+.pagination li a,
+.pagination li span {
+    color: #003049;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #780000;
+    border-radius: 0.25rem;
     text-decoration: none;
-    color: #fff;
-    background: #333;
-    border-radius: 4px;
-    transition: background 0.3s;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.pagination-link:hover {
-    background: #555;
+.pagination li a:hover {
+    background-color: #669bbc;
+    color: white;
 }
 
-.pagination .active .pagination-link {
-    background: #fff;
-    color: #000;
-    font-weight: bold;
-}
-
-.pagination .disabled .pagination-link {
+.pagination .active span {
+    background-color: #780000;
+    color: white;
+    border-color: #780000;
     pointer-events: none;
-    background: #777;
-    opacity: 0.5;
+}
+
+.pagination .disabled span,
+.pagination .disabled a {
+    color: #003049;
+    background-color: #fdf0d5;
+    border-color: #c1121f;
+    pointer-events: none;
 }
 
 /* ========== Stile della mappa ========== */
+.map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fdf0d5;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
 #map {
-    height: 100vh;
-    border: 3px solid #14213d; /* Bordo definito */
-    border-radius: 10px; /* Arrotonda i bordi */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); /* Ombra elegante */
+    width: 100%;
+    height: 75vh; /* Mappa più alta */
+    border: 2px solid #14213d;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+#map:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
 #videoContainer,
@@ -402,4 +590,10 @@ select.form-control.filter {
 #map.hidden {
     opacity: 0;
     visibility: hidden;
+}
+
+.location-title {
+    background-color: #fdf0d5;
+    font-size: 1.5rem;
+    color: #2c3e50;
 }

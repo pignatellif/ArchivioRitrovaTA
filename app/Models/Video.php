@@ -7,9 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'titolo', 'anno', 'durata_secondi', 'formato',
-        'descrizione', 'famiglia', 'luogo', 'link_youtube', 'autore_id'
+        'titolo',
+        'anno',
+        'durata_secondi',
+        'formato',
+        'descrizione',
+        'famiglia',
+        'link_youtube',
+        'autore_id',
+        'location_id',
     ];
 
     public function autore()
@@ -19,11 +28,11 @@ class Video extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'tag_video');
+        return $this->belongsToMany(Tag::class);
     }
 
-    public function serie()
+    public function location()
     {
-        return $this->belongsToMany(Serie::class, 'serie_video');
+        return $this->belongsTo(Location::class);
     }
 }

@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('autores', function (Blueprint $table) {
-            $table->id(); // Colonna ID primaria
-            $table->string('nome');
-            $table->integer('anno_nascita')->nullable();
-            $table->timestamps(); // Created_at e Updated_at
-        });
+            $table->id(); // ID primario
+            $table->string('nome'); // Nome completo dell'autore
+            $table->text('biografia')->nullable(); // Descrizione breve
+            $table->string('immagine_profilo')->nullable(); // Percorso dell'immagine
+            $table->integer('anno_nascita')->nullable(); // Solo se ti serve
+            $table->timestamps(); // created_at e updated_at
+        });        
     }
 
     /**

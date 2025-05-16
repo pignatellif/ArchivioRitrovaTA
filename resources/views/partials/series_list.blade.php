@@ -1,5 +1,6 @@
 @foreach($series as $serie)
-    <h2 class="series-title">{{ $serie->name }}</h2>
+<div>
+    <h2 class="series-title">{{ $serie->nome }}</h2>
     
     <div class="wrapper mb-4">
         <div class="carousel" id="carousel-{{ $loop->index }}">
@@ -10,10 +11,10 @@
                 <div class="item">
                     <a href="{{ route('video.show', $video->id) }}">
                         <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg" 
-                        alt="Anteprima del video {{ $video->title }}" 
+                        alt="Anteprima del video {{ $video->titolo }}" 
                         class="video-thumbnail">
                         <div class="video-title-wrapper">
-                            <p class="video-title">{{ $video->title }}</p>
+                            <p class="video-title">{{ $video->titolo }}</p>
                         </div>
                     </a>
                 </div>
@@ -25,9 +26,10 @@
     </div>
     
     <div class="series-description-wrapper mb-3">
-        <p class="series-description">{{ $serie->description }}</p>
+        <p class="series-description">{{ $serie->descrizione }}</p>
     </div>
 
-    <hr class="divider">
+    <div class="section-divider"></div>
+</div>
 @endforeach
 {{ $series->links() }}

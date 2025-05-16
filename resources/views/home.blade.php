@@ -32,35 +32,29 @@
 <section class="progetti">
     <h2 class="titolo-sezione">I nostri progetti</h2>
     <div class="griglia-progetti">
-        <div class="progetto">
-            <img src="{{ asset('img/progetti/cineteca.png') }}" alt="Cineteca dello Stretto – Ortigia" class="img-progetto">
-            <h3 class="titolo-progetto">Cineteca dello Stretto – Ortigia</h3>
-            <p class="descrizione-progetto">
-                Dal 2023 archiviamo ricordi, dal 2024 siamo un ETS.<br>
-                Archivio RitrovaTA partecipa alla non-conferenza con i suoi filmini di famiglia: piccoli frammenti che raccontano la Puglia e Taranto attraverso lo sguardo intimo delle persone.
-            </p>
-        </div>
-        <div class="progetto">
-            <img src="{{ asset('img/progetti/recordis.png') }}" alt="RECordis – Palazzo Ulmo" class="img-progetto">
-            <h3 class="titolo-progetto">RECordis – Palazzo Ulmo</h3>
-            <p class="descrizione-progetto">
-                Archivio RitrovaTA partecipa alla residenza #RECordis con un incontro dedicato alla memoria filmica privata.<br>
-                Giovanni Talamo presenta il talk <em>“Filmini di famiglia: significato, storia e archivi”</em>, seguito dalla proiezione di filmati storici dell’Archivio.
-            </p>
-        </div>
-        <div class="progetto">
-            <img src="{{ asset('img/progetti/vicoli.png') }}" alt="Vicoli Corti – Massafra" class="img-progetto">
-            <h3 class="titolo-progetto">Vicoli Corti – Massafra</h3>
-            <p class="descrizione-progetto">
-                Parte la raccolta dei filmati privati girati a Massafra in Super 8 o 8mm: viaggi, feste, momenti di vita.<br>
-                Archivio RitrovaTA li digitalizza gratuitamente e li valorizza all’interno di eventi pubblici.<br><br>
-                Contribuisci anche tu alla costruzione di una memoria collettiva.<br>
-                Ci vediamo a <strong>Vicoli Corti</strong>!
-            </p>
-        </div>
+        @foreach($recentEvents as $event)
+            <div class="progetto">
+                @if($event->cover_image)
+                    <img src="{{ asset($event->cover_image) }}" alt="Copertina di {{ $event->titolo }}" class="img-progetto">
+                @else
+                    <img src="{{ asset('images/default-cover.jpg') }}" alt="Copertina di default" class="img-progetto">
+                @endif
+                <h3 class="titolo-progetto">{{ $event->titolo }}</h3>
+                <p class="descrizione-progetto">
+                    {{ \Illuminate\Support\Str::limit($event->descrizione, 150, '...') }}<br><br>
+                    <strong>Data:</strong> 
+                    {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }}
+                    @if($event->end_date)
+                        - {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
+                    @endif
+                    <br>
+                    <strong>Luogo:</strong> {{ $event->luogo }}
+                </p>
+            </div>
+        @endforeach
     </div>
     <div class="contenitore-bottone">
-        <a href="#" class="bottone-trasparente">Sfoglia le nostre iniziative</a>
+        <a href="{{ route('eventi') }}" class="bottone-trasparente">Sfoglia tutti gli eventi</a>
     </div>
 </section>
 
@@ -89,7 +83,7 @@
         <p>
             Nel nostro Archivio trovi ricordi in movimento: frammenti di vita pugliese, custoditi e restituiti alla comunità. Una finestra sul passato, da esplorare e riconoscere.
         </p>
-        <a href="#" class="archive-button">Vai all'Archivio</a>
+        <a href="{{ route('archivio') }}" class="archive-button">Vai all'Archivio</a>
     </div>
     <div class="archive-half image">
         <img src="{{ asset('img/home/image1.png') }}" alt="Archivio" class="archive-image">
@@ -108,7 +102,7 @@
         <p>
             Nel nostro Archivio trovi ricordi in movimento: frammenti di vita pugliese, custoditi e restituiti alla comunità. Una finestra sul passato, da esplorare e riconoscere.
         </p>
-        <a href="#" class="archive-button">Esplora le Serie</a>
+        <a href="{{ route('serie') }}" class="archive-button">Esplora le Serie</a>
     </div>
 </section>
 
@@ -121,7 +115,7 @@
         <p>
             In questa sezione trovano spazio i filmati girati nel resto d’Italia e del mondo. Perché la memoria segue le persone, ovunque vadano.
         </p>
-        <a href="#" class="archive-button">Guarda i filmati</a>
+        <a href="{{ route('fuori_dal_tacco') }}" class="archive-button">Guarda i filmati</a>
     </div>
     <div class="archive-half image">
         <img src="{{ asset('img/home/image3.png') }}" alt="Archivio" class="archive-image">
@@ -140,7 +134,7 @@
         <p>
             “Fuori dal Frame” dà spazio ai racconti di chi ha vissuto quei momenti: mini-interviste che svelano le storie celate dietro i filmini di famiglia.
         </p>
-        <a href="#" class="archive-button">Scopri le Storie</a>
+        <a href="{{ route('fuori_dal_frame') }}" class="archive-button">Scopri le Storie</a>
     </div>
 </section>
 
@@ -153,9 +147,9 @@
             <h5>Hai un filmato da condividere? Un ricordo da valorizzare? Scrivici!</h5>
         </div>
         <div class="contact-info">
-            <p class="contact-detail">📍 Via Cataldo Nitti, 155, Taranto – 40123, Italia</p>
-            <p class="contact-detail">📞 +39 3928783002</p>
-            <p class="contact-detail">✉️ <a href="mailto:inforitrovata@gmail.com">inforitrovata@gmail.com</a></p>
+            <p class="contact-detail"><i class="fa-solid fa-map-pin"></i> Via Cataldo Nitti, 155, Taranto – 40123, Italia</p>
+            <p class="contact-detail"><i class="fa-solid fa-phone"></i> +39 3928783002</p>
+            <p class="contact-detail"><i class="fa-solid fa-paper-plane"></i> <a href="mailto:inforitrovata@gmail.com">inforitrovata@gmail.com</a></p>
             <div class="contact-social">
                 <a href="#"><i class="fa-brands fa-facebook"></i></a>
                 <a href="#"><i class="fa-brands fa-instagram"></i></a>

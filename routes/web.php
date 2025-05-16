@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 // ==========================
 Route::controller(SectionController::class)->group(function () {
     Route::get('/', 'home')->name('home');
+    Route::get('/search', 'index')->name('search');
     Route::get('/video/{id}', 'video')->name('video.show');
     Route::get('/archivio', 'archivio')->name('archivio');
     Route::get('/serie', 'serie')->name('serie');
@@ -24,8 +25,10 @@ Route::controller(SectionController::class)->group(function () {
     Route::get('/eventi', 'eventi')->name('eventi');
     Route::get('/sostienici', 'sostienici')->name('sostienici');
     Route::get('/chi-siamo', 'info')->name('chi_siamo');
-    Route::get('/fuori-dal-frame/registi', 'registi')->name('registi');
+    Route::get('/fuori-dal-frame/autori', 'autori')->name('autori');
+    Route::get('/fuori-dal-frame/autori/{id}', 'showAutore')->name('autore.show');
     Route::get('/fuori-dal-frame/personaggi', 'personaggi')->name('personaggi');
+    Route::get('/dicono-di-noi', 'diconoDiNoi')->name('dicono_di_noi');
 });
 
 
@@ -82,6 +85,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{event}/edit', [EventController::class, 'edit'])->name('edit');  // Modifica
         Route::put('/{event}', [EventController::class, 'update'])->name('update');  // Aggiornamento
         Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');  // Eliminazione
+        Route::delete('/{event}/remove-cover-image', [EventController::class, 'removeCoverImage'])->name('removeCoverImage');
     });
 
 });

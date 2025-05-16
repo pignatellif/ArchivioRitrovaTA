@@ -1,6 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ JavaScript caricato correttamente!");
 
+    // 🔁 Ripristina stato del form da localStorage
+    const saved = JSON.parse(localStorage.getItem("seriesFormData"));
+    if (saved) {
+        document.getElementById("name").value = saved.name || "";
+        document.getElementById("description").value = saved.description || "";
+        document.getElementById("selectedVideosInput").value =
+            saved.selectedVideos || "";
+        localStorage.removeItem("seriesFormData");
+    }
+
     let selectedVideos = new Set(
         document
             .getElementById("selectedVideosInput")
@@ -88,4 +98,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
     }
+
+    // 💾 Salva stato prima di applicare i filtri
+    const filterForm = document.querySelector('form[action*="series.edit"]');
+    if (filterForm) {
+        filterForm.addEventListener("submit", function () {
+            localStorage.setItem(
+                "seriesFormData",
+                JSON.stringify({
+                    name: document.getElementById("name").value,
+                    description: document.getElementById("description").value,
+                    selectedVideos: document.getElementById(
+                        "selectedVideosInput"
+                    ).value,
+                })
+            );
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tagCheckboxes = document.querySelectorAll(".filter-tag");
+    const hiddenInput = document.getElementById("tags-hidden-input");
+
+    function updateHiddenInput() {
+        const selectedTags = Array.from(tagCheckboxes)
+            .filter((checkbox) => checkbox.checked)
+            .map((checkbox) => checkbox.value);
+        hiddenInput.value = selectedTags.join(",");
+    }
+
+    tagCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", updateHiddenInput);
+    });
+
+    // Aggiorna inizialmente il valore se ci sono checkbox già selezionate
+    updateHiddenInput();
 });

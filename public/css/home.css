@@ -106,7 +106,7 @@ body {
 
 .hero-button:hover {
     background-color: white;
-    color: #343a40;
+    color: #003049;
     transform: scale(1.1); /* Effetto hover */
 }
 
@@ -281,7 +281,7 @@ body {
     width: 100%;
     height: auto;
     margin-bottom: 1rem;
-    border: 1px solid #14213d;
+    border: 1px solid #003049;
 }
 
 .titolo-progetto {
@@ -427,7 +427,7 @@ body {
     width: 100vw;
     height: auto;
     min-height: 50vh;
-    border-bottom: 5px solid #14213d;
+    border-bottom: 5px solid #003049;
 }
 
 .archive-half {
@@ -514,7 +514,7 @@ body {
 }
 
 .contact-header h5 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #003049;
 }
 

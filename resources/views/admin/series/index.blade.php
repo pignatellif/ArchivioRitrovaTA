@@ -27,8 +27,8 @@
         <tbody>
             @foreach ($series as $serie)
             <tr>
-                <td>{{ $serie->name }}</td>
-                <td>{{ $serie->description }}</td>
+                <td>{{ $serie->nome }}</td>
+                <td class="truncate">{{ Str::limit($serie->descrizione, 100) }}</td> <!-- Troncamento della descrizione -->
                 <td>{{ $serie->videos->count() }}</td>
                 <td>
                     <a href="{{ route('series.edit', $serie->id) }}" class="btn btn-warning btn-sm">Modifica</a>
@@ -46,3 +46,14 @@
     <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary mt-3">Torna alla Dashboard</a>
 </div>
 @endsection
+
+@push('styles')
+    <style>
+        .truncate {
+            max-width: 200px; /* Limita la larghezza della descrizione */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+@endpush

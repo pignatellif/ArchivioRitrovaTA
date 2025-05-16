@@ -4,16 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Autore;
-use App\Models\Seire;
+use App\Models\Serie;
 use App\Models\Tag;
 use App\Models\Video;
+use App\Models\Location;
+use App\Models\Evento;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class SectionController extends Controller
 {
     public function home()
     {
-        return view('home');
+        // Recupera i tre eventi più recenti
+        $recentEvents = Evento::orderBy('start_date', 'desc')->take(3)->get();
+    
+        return view('home', compact('recentEvents'));
+    }
+
+    public function index(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Esegui la ricerca (su video, autori, ecc. a seconda delle tue necessità)
+        $risultati = Video::where('titolo', 'like', "%{$query}%")->get();
+
+        return view('search.results', compact('query', 'risultati'));
     }
 
     public function video($id)
@@ -23,117 +39,138 @@ class SectionController extends Controller
         return view('sections.video', compact('video'));
     }
 
-    private function getYoutubeVideoId($url) {
+    private function getYoutubeVideoId($url)
+    {
         preg_match('/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/v\/|embed\/|shorts\/|.*[?&]v=))([^"&?\/\s]{11})/', $url, $matches);
         return $matches[1] ?? null;
-    } 
+    }
 
+    private function applyFilters($query, $filters)
+    {
+        if (!empty($filters['title'])) {
+            $query->where('titolo', 'LIKE', '%' . $filters['title'] . '%');
+        }
+
+        if (!empty($filters['min_year']) && !empty($filters['max_year'])) {
+            $query->whereBetween('anno', [$filters['min_year'], $filters['max_year']]);
+        }
+
+        if (!empty($filters['author'])) {
+            $query->whereHas('autore', function ($q) use ($filters) {
+                $q->where('nome', 'LIKE', '%' . $filters['author'] . '%');
+            });
+        }
+
+        if (!empty($filters['min_duration']) && !empty($filters['max_duration'])) {
+            $query->whereBetween('durata_secondi', [$filters['min_duration'], $filters['max_duration']]);
+        }
+
+        if (!empty($filters['format'])) {
+            $query->where('formato', $filters['format']);
+        }
+
+        if (!empty($filters['family'])) {
+            $query->where('famiglia', $filters['family']);
+        }
+
+        if (!empty($filters['location'])) {
+            $query->whereHas('location', function ($q) use ($filters) {
+                $q->where('name', 'LIKE', '%' . $filters['location'] . '%');
+            });
+        }        
+
+        if (!empty($filters['tags'])) {
+            $query->whereHas('tags', function ($q) use ($filters) {
+                $q->whereIn('nome', $filters['tags']);
+            });
+        }
+
+        return $query;
+    }
+    
     public function archivio(Request $request)
     {
         // Recupera i valori dei filtri dal request
-        $titolo = $request->input('title');
-        $annoMin = $request->input('min_year');
-        $annoMax = $request->input('max_year');
-        $autore = $request->input('author');
-        $durataMin = $request->input('min_duration');
-        $durataMax = $request->input('max_duration');
-        $formato = $request->input('format');
-        $famiglia = $request->input('family');
-        $luogo = $request->input('location');
-        $view = $request->input('view', 'grid'); // Default "grid"
-    
-        // Avvio una query per recuperare i video
-        $query = Video::query();
-    
-        // Applica i filtri se presenti
-        if ($titolo) {
-            $query->where('titolo', 'LIKE', '%' . $titolo . '%');
-        }
-    
-        if ($annoMin && $annoMax) {
-            $query->whereBetween('anno', [$annoMin, $annoMax]);
-        }
-    
-        if ($autore) {
-            $query->whereHas('autore', function ($q) use ($autore) {
-                $q->where('nome', 'LIKE', '%' . $autore . '%');
-            });
-        }
-    
-        if ($durataMin && $durataMax) {
-            $query->whereBetween('durata_secondi', [$durataMin, $durataMax]);
-        }
-    
-        if ($formato) {
-            $query->where('formato', $formato);
-        }
-    
-        if ($famiglia) {
-            $query->where('famiglia', $famiglia);
-        }
-    
-        if ($luogo) {
-            $query->where('luogo', 'LIKE', '%' . $luogo . '%');
-        }
-    
+        $filters = $request->only([
+            'title', 'min_year', 'max_year', 'author',
+            'min_duration', 'max_duration', 'format', 
+            'family', 'location', 'tags', 'view'
+        ]);
+        
+        $view = $filters['view'] ?? 'grid';
+
+        // Escludi i video con quei tag
+        $query = Video::whereDoesntHave('tags', function ($q) {
+            $q->whereIn('nome', ['Fuori dal frame', 'Fuori dal Tacco']);
+        });
+        $this->applyFilters($query, $filters);
+
         // Recupera i video paginati
-        $videos = $query->paginate(10);
-    
+        $videos = $query->with(['location', 'autore', 'tags'])->paginate(18);
+
+        // Estrai gli ID di YouTube per ogni video
+        foreach ($videos as $video) {
+            $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
+        }
+
         // Controlla se la richiesta è AJAX
         if ($request->ajax()) {
-            // Se la vista è "mappa", passiamo i luoghi per la mappa
-            if ($view === 'map') {
-                $locations = $videos->pluck('luogo')->unique()->filter()->values();
-                $html = view('partials.map', compact('locations'))->render();
-            } else {
-                // Default: vista "griglia"
-                $html = view('partials.grid', compact('videos'))->render();
-            }
-    
-            // Restituisci una risposta JSON
-            return response()->json([
-                'html' => $html,
-            ]);
+            $html = ($view === 'map')
+                ? view('partials.map', ['locations' => $videos->pluck('location')->unique()])->render()
+                : view('partials.grid', compact('videos'))->render();
+        
+            return response()->json(['html' => $html]);
         }
-    
-        // Recupera i dati per i filtri (per la prima visualizzazione completa)
-        $minYear = Video::min('anno');
-        $maxYear = Video::max('anno');
-        $minDuration = Video::min('durata_secondi');
-        $maxDuration = Video::max('durata_secondi');
-        $authors = Autore::pluck('nome');
-        $formats = Video::distinct()->pluck('formato');
-        $families = Video::distinct()->pluck('famiglia');
-        $locations = Video::distinct()->pluck('luogo');
-    
-        // Restituisci la vista completa per richieste normali
-        return view('sections.archivio', compact(
-            'videos', 'minYear', 'maxYear', 'minDuration', 
-            'maxDuration', 'authors', 'formats', 'families', 'locations'
+
+        // Recupera i dati per i filtri (escludendo i tag speciali)
+        $filtersData = [
+            'minYear' => Video::min('anno'),
+            'maxYear' => Video::max('anno'),
+            'minDuration' => Video::min('durata_secondi'),
+            'maxDuration' => Video::max('durata_secondi'),
+            'authors' => Autore::pluck('nome'),
+            'formats' => Video::distinct()->pluck('formato'),
+            'families' => Video::distinct()->pluck('famiglia'),
+            'locations' => Location::pluck('name'),
+            // QUI escludi i tag speciali
+            'tags' => Tag::whereNotIn('nome', ['Fuori dal frame', 'Fuori dal Tacco'])->pluck('nome'),
+        ];
+
+        // Restituisce la vista
+        return view('sections.archivio', array_merge(
+            compact('videos'), $filtersData
         ));
     }
 
     public function serie(Request $request)
     {
         try {
-            $series = Series::with('videos')->paginate(10);
+            // Recupera le serie con i relativi video
+            $series = Serie::with('videos')->paginate(10);
+    
+            // Itera sulle serie e sui video per elaborare i dati
             $series->each(function ($serie) {
                 $serie->videos->each(function ($video) {
-                    $video->youtube_id = $this->getYoutubeVideoId($video->yt_link); // Cambia url a yt_link
-                    // Logga gli URL dei video e gli ID estratti per il debug
-                    \Log::info('Video URL: ' . $video->yt_link . ' - YouTube ID: ' . $video->youtube_id);
+                    // Aggiorna l'ID di YouTube basandoti sul nuovo campo link_youtube
+                    $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
+                    
+                    // Logga gli URL dei video e gli ID estratti per debug
+                    \Log::info('Video URL: ' . $video->link_youtube . ' - YouTube ID: ' . $video->youtube_id);
                 });
             });
-
+    
+            // Ritorna una risposta JSON se la richiesta è AJAX
             if ($request->ajax()) {
                 return response()->json([
                     'html' => view('partials.series_list', compact('series'))->render()
                 ]);
             }
-
+    
+            // Ritorna la vista delle serie
             return view('sections.serie', compact('series'));
-
+    
         } catch (\Exception $e) {
+            // Logga l'errore e ritorna una risposta di errore
             \Log::error('Errore in serie(): ' . $e->getMessage());
             return response()->json(['error' => 'Errore interno del server'], 500);
         }
@@ -142,100 +179,77 @@ class SectionController extends Controller
     public function fuoriDalTacco(Request $request)
     {
         try {
-            // Query per recuperare i video con il tag "Fuori dal Tacco"
-            $query = Video::where('tags', 'like', '%Fuori dal Tacco%');
+            // Recupera i valori dei filtri dal request
+            $filters = $request->only([
+                'title', 'min_year', 'max_year', 'author',
+                'min_duration', 'max_duration', 'format', 
+                'family', 'location', 'tags', 'view'
+            ]);
             
-            // Filtro per titolo
-            if ($request->filled('title')) {
-                $query->where('title', 'like', '%' . $request->title . '%');
-            }
-            
-            // Filtro per autore
-            if ($request->filled('author')) {
-                $query->where('author', 'like', '%' . $request->author . '%');
-            }
-            
-            // Filtro per anno
-            if ($request->filled('min_year') && $request->filled('max_year')) {
-                $query->whereBetween('year', [$request->min_year, $request->max_year]);
-            }
-            
-            // Filtro per durata
-            if ($request->filled('min_duration') && $request->filled('max_duration')) {
-                $query->whereBetween('duration', [$request->min_duration, $request->max_duration]);
-            }
+            $view = $filters['view'] ?? 'grid';
 
-            // Filtro per formato
-            if ($request->filled('format')) {
-                $query->where('format', $request->format);
-            }
-
-            // Filtro per famiglia
-            if ($request->filled('family')) {
-                $query->where('family', $request->family);
-            }
-
-            // Filtro per luogo
-            if ($request->filled('location')) {
-                $query->where('location', $request->location);
-            }
+            // Solo video con "Fuori dal Tacco"
+            $query = Video::whereHas('tags', function ($q) {
+                $q->where('nome', 'Fuori dal Tacco');
+            });
+            $this->applyFilters($query, $filters); // <-- commentata
 
             // Recupera i video paginati
-            $videos = $query->paginate(18);
+            $videos = $query->with(['location', 'autore', 'tags'])->paginate(18);
 
-            // Assegna gli ID YouTube ai video
-            $videos->each(function ($video) {
-                $youtubeId = $this->getYoutubeVideoId($video->yt_link);
-                $video->youtube_id = $youtubeId ?: null; // Fallback
-            });
-    
-            // Recupera solo le location valide (filtrando i dati malformati)
-            $locationList = $query->pluck('location')
-            ->filter()
-            ->unique()
-            ->values()
-            ->toArray();
-                
-            // Determina il tipo di vista (griglia o mappa)
-            $viewType = $request->get('view', 'grid');
-    
-            // Se la richiesta è AJAX, restituisce la vista parziale appropriata
+            // Estrai gli ID di YouTube per ogni video
+            foreach ($videos as $video) {
+                $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
+            }
+
+            // Controlla se la richiesta è AJAX
             if ($request->ajax()) {
-                $html = match ($viewType) {
-                    'grid' => view('partials.video_list', compact('videos'))->render(),
-                    'map' => view('partials.mappa', compact('locationList'))->render(),
-                    default => view('partials.video_list', compact('videos'))->render(),
-                };
-    
+                $html = ($view === 'map')
+                    ? view('partials.map', ['locations' => $videos->pluck('location')->unique()])->render()
+                    : view('partials.grid', compact('videos'))->render();
+            
                 return response()->json(['html' => $html]);
             }
 
-            // Filtra i dati per i filtri basandosi sui video con tag "Fuori dal Tacco"
-            $authors = Video::where('tags', 'like', '%Fuori dal Tacco%')->select('author')->distinct()->pluck('author');
-            $formats = Video::where('tags', 'like', '%Fuori dal Tacco%')->select('format')->distinct()->pluck('format');
-            $families = Video::where('tags', 'like', '%Fuori dal Tacco%')->select('family')->distinct()->pluck('family');
-            $locations = Video::where('tags', 'like', '%Fuori dal Tacco%')->select('location')->distinct()->pluck('location');
-            $minYear = Video::where('tags', 'like', '%Fuori dal Tacco%')->min('year');
-            $maxYear = Video::where('tags', 'like', '%Fuori dal Tacco%')->max('year');
-            $minDuration = Video::where('tags', 'like', '%Fuori dal Tacco%')->min('duration');
-            $maxDuration = Video::where('tags', 'like', '%Fuori dal Tacco%')->max('duration');
+            // Recupera i dati per i filtri (facoltativo: puoi filtrare solo i tag presenti tra questi video)
+            $filtersData = [
+                'minYear' => Video::whereHas('tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->min('anno'),
+                'maxYear' => Video::whereHas('tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->max('anno'),
+                'minDuration' => Video::whereHas('tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->min('durata_secondi'),
+                'maxDuration' => Video::whereHas('tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->max('durata_secondi'),
+                'authors' => Autore::whereHas('videos.tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->pluck('nome'),
+                'formats' => Video::whereHas('tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->distinct()->pluck('formato'),
+                'families' => Video::whereHas('tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->distinct()->pluck('famiglia'),
+                'locations' => Location::whereHas('videos.tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })->pluck('name'),
+                'tags' => Tag::whereHas('videos.tags', function ($q) {
+                    $q->where('nome', 'Fuori dal Tacco');
+                })
+                ->whereNotIn('nome', ['Fuori dal frame', 'Fuori dal Tacco'])
+                ->pluck('nome')
+            ];
 
-            // Restituisce la vista completa
-            return view('sections.fuori-dal-tacco', compact(
-                'videos',
-                'authors',
-                'formats',
-                'families',
-                'locations',
-                'minYear',
-                'maxYear',
-                'minDuration',
-                'maxDuration',
-                'viewType'
+            // Restituisce la vista
+            return view('sections.fuori-dal-tacco', array_merge(
+                compact('videos'), $filtersData
             ));
-    
+
         } catch (\Exception $e) {
-            // Logga l'errore e restituisce una risposta di errore
             \Log::error('Errore in fuoriDalTacco(): ' . $e->getMessage());
             return response()->json(['error' => 'Errore interno del server'], 500);
         }
@@ -246,135 +260,40 @@ class SectionController extends Controller
         return view('sections.fuori-dal-frame');
     }
 
-    public function registi(Request $request)
+    public function autori()
     {
-        $query = $request->input('query');
-        $directors = Video::select('autore')->distinct();
+        $autori = Autore::withCount('videos')->get();
     
-        if ($query) {
-            $directors = $directors->where('autore', 'like', '%' . $query . '%');
-        }
+        return view('sections.autori', compact('autori'));
+    }
     
-        $directors = $directors->paginate(10);
-    
-        return view('sections.registi', compact('directors'));
+    public function showAutore($id)
+    {
+        $autore = Autore::with(['videos.tags', 'videos.location'])->findOrFail($id);
+
+        return view('sections.autore-show', compact('autore'));
     }
 
-    public function personaggi(Request $request)
+    public function personaggi()
     {
-        try {
-            // Query per recuperare i video con il tag "Fuori dal Frame"
-            $query = Video::where('tags', 'like', '%Fuori dal Frame%');
-            
-            // Filtro per titolo
-            if ($request->filled('title')) {
-                $query->where('title', 'like', '%' . $request->title . '%');
-            }
-            
-            // Filtro per autore
-            if ($request->filled('author')) {
-                $query->where('author', 'like', '%' . $request->author . '%');
-            }
-            
-            // Filtro per anno
-            if ($request->filled('min_year') && $request->filled('max_year')) {
-                $query->whereBetween('year', [$request->min_year, $request->max_year]);
-            }
-            
-            // Filtro per durata
-            if ($request->filled('min_duration') && $request->filled('max_duration')) {
-                $query->whereBetween('duration', [$request->min_duration, $request->max_duration]);
-            }
+        $videoFuoriDalFrame = Video::whereHas('tags', function ($query) {
+            $query->where('nome', 'fuori dal frame');
+        })->with(['tags', 'location'])->get();
 
-            // Filtro per formato
-            if ($request->filled('format')) {
-                $query->where('format', $request->format);
-            }
-
-            // Filtro per famiglia
-            if ($request->filled('family')) {
-                $query->where('family', $request->family);
-            }
-
-            // Filtro per luogo
-            if ($request->filled('location')) {
-                $query->where('location', $request->location);
-            }
-
-            // Recupera i video paginati
-            $videos = $query->paginate(18);
-
-            // Assegna gli ID YouTube ai video
-            $videos->each(function ($video) {
-                $youtubeId = $this->getYoutubeVideoId($video->yt_link);
-                $video->youtube_id = $youtubeId ?: null; // Fallback
-            });
-
-            // Recupera solo le location valide (filtrando i dati malformati)
-            $locationList = $query->pluck('location')
-                ->filter()
-                ->unique()
-                ->values()
-                ->toArray();
-                
-            // Recupera tutti i formati dei video, anche senza il tag "Fuori dal Frame"
-            $allFormats = Video::select('format')->distinct()->pluck('format')->toArray();
-
-            // Determina il tipo di vista (griglia o mappa)
-            $viewType = $request->get('view', 'grid');
-
-            // Se la richiesta è AJAX, restituisce la vista parziale appropriata
-            if ($request->ajax()) {
-                $html = match ($viewType) {
-                    'grid' => view('partials.video_list', compact('videos'))->render(),
-                    'map' => view('partials.mappa', compact('locationList'))->render(),
-                    default => view('partials.video_list', compact('videos'))->render(),
-                };
-
-                return response()->json(['html' => $html]);
-            }
-
-            // Filtra i dati per i filtri basandosi sui video con tag "Fuori dal Frame"
-            $authors = Video::where('tags', 'like', '%Fuori dal Frame%')->select('author')->distinct()->pluck('author');
-            $formats = Video::where('tags', 'like', '%Fuori dal Frame%')->select('format')->distinct()->pluck('format');
-            $families = Video::where('tags', 'like', '%Fuori dal Frame%')->select('family')->distinct()->pluck('family');
-            $locations = Video::where('tags', 'like', '%Fuori dal Frame%')->select('location')->distinct()->pluck('location');
-            $minYear = Video::where('tags', 'like', '%Fuori dal Frame%')->min('year');
-            $maxYear = Video::where('tags', 'like', '%Fuori dal Frame%')->max('year');
-            $minDuration = Video::where('tags', 'like', '%Fuori dal Frame%')->min('duration');
-            $maxDuration = Video::where('tags', 'like', '%Fuori dal Frame%')->max('duration');
-
-            // Restituisce la vista completa
-            return view('sections.personaggi', compact(
-                'videos',
-                'authors',
-                'formats',
-                'families',
-                'locations',
-                'minYear',
-                'maxYear',
-                'minDuration',
-                'maxDuration',
-                'viewType',
-                'allFormats'
-            ));
-
-        } catch (\Exception $e) {
-            // Logga l'errore e restituisce una risposta di errore
-            \Log::error('Errore in fuoriDalFrame(): ' . $e->getMessage());
-            return response()->json(['error' => 'Errore interno del server'], 500);
-        }
+        return view('sections.personaggi', compact('videoFuoriDalFrame'));
     }
     
     public function eventi(Request $request)
     {
         $query = $request->input('query');
-        $events = Event::query();
+        $events = Evento::query(); // Utilizzo del modello aggiornato "Evento"
     
         if ($query) {
-            $events = $events->where('title', 'like', '%' . $query . '%')
-                             ->orWhere('description', 'like', '%' . $query . '%')
-                             ->orWhere('date', 'like', '%' . $query . '%');
+            $events = $events->where('titolo', 'like', '%' . $query . '%') // Ricerca nel campo "titolo"
+                             ->orWhere('descrizione', 'like', '%' . $query . '%') // Ricerca nel campo "descrizione"
+                             ->orWhere('start_date', 'like', '%' . $query . '%') // Ricerca nel campo "start_date"
+                             ->orWhere('end_date', 'like', '%' . $query . '%') // Ricerca nel campo "end_date"
+                             ->orWhere('luogo', 'like', '%' . $query . '%'); // Ricerca nel campo "luogo"
         }
     
         $events = $events->paginate(10);
@@ -390,5 +309,10 @@ class SectionController extends Controller
     public function info()
     {
         return view('sections.chi-siamo');
+    }
+
+    public function diconoDiNoi()
+    {
+        return view('sections.dicono-di-noi');
     }
 }

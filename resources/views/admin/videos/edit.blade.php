@@ -4,7 +4,6 @@
 <div class="container mt-4">
     <h2 class="mb-4">Modifica Video</h2>
 
-    <!-- Messaggi di errore -->
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -15,59 +14,69 @@
         </div>
     @endif
 
-    <!-- Form per modificare il video -->
     <form action="{{ route('videos.update', $video->id) }}" method="POST">
         @csrf
         @method('PUT')
 
         <div class="mb-3">
-            <label for="title" class="form-label">Titolo</label>
-            <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $video->title) }}" required>
+            <label for="titolo" class="form-label">Titolo</label>
+            <input type="text" name="titolo" id="titolo" class="form-control" 
+                   value="{{ old('titolo', $video->titolo) }}" required>
         </div>
 
         <div class="mb-3">
-            <label for="description" class="form-label">Descrizione</label>
-            <textarea name="description" id="description" class="form-control" rows="4" required>{{ old('description', $video->description) }}</textarea>
+            <label for="descrizione" class="form-label">Descrizione</label>
+            <textarea name="descrizione" id="descrizione" class="form-control" rows="4">{{ old('descrizione', $video->descrizione) }}</textarea>
         </div>
 
         <div class="mb-3">
-            <label for="year" class="form-label">Anno</label>
-            <input type="number" name="year" id="year" class="form-control" value="{{ old('year', $video->year) }}" required>
+            <label for="anno" class="form-label">Anno</label>
+            <input type="number" name="anno" id="anno" class="form-control" 
+                   value="{{ old('anno', $video->anno) }}">
         </div>
 
         <div class="mb-3">
-            <label for="duration" class="form-label">Durata (secondi)</label>
-            <input type="number" name="duration" id="duration" class="form-control" value="{{ old('duration', $video->duration) }}" required>
+            <label for="durata_secondi" class="form-label">Durata (secondi)</label>
+            <input type="number" name="durata_secondi" id="durata_secondi" class="form-control" 
+                   value="{{ old('durata_secondi', $video->durata_secondi) }}" required>
         </div>
 
         <div class="mb-3">
-            <label for="format" class="form-label">Formato</label>
-            <input type="text" name="format" id="format" class="form-control" value="{{ old('format', $video->format) }}" required>
+            <label for="formato" class="form-label">Formato</label>
+            <input type="text" name="formato" id="formato" class="form-control" 
+                   value="{{ old('formato', $video->formato) }}">
         </div>
 
         <div class="mb-3">
-            <label for="family" class="form-label">Famiglia</label>
-            <input type="text" name="family" id="family" class="form-control" value="{{ old('family', $video->family) }}" required>
+            <label for="famiglia" class="form-label">Famiglia</label>
+            <input type="text" name="famiglia" id="famiglia" class="form-control" 
+                   value="{{ old('famiglia', $video->famiglia) }}">
         </div>
 
         <div class="mb-3">
-            <label for="location" class="form-label">Luogo</label>
-            <input type="text" name="location" id="location" class="form-control" value="{{ old('location', $video->location) }}" required>
+            <label for="luogo" class="form-label">Luogo</label>
+            <input type="text" name="luogo" id="luogo" class="form-control" 
+                   value="{{ old('luogo', $video->location->name ?? '') }}" required>
         </div>
 
         <div class="mb-3">
             <label for="tags" class="form-label">Tag (separati da virgole)</label>
-            <input type="text" name="tags" id="tags" class="form-control" value="{{ old('tags', $video->tags) }}">
+            <input type="text" name="tags" id="tags" class="form-control" 
+                   value="{{ old('tags', $video->tags->pluck('nome')->implode(', ')) }}">
+            <small class="form-text text-muted">Inserisci i tag separati da virgole (es. "tag1, tag2, tag3").</small>
         </div>
 
         <div class="mb-3">
-            <label for="yt_link" class="form-label">Link YouTube</label>
-            <input type="url" name="yt_link" id="yt_link" class="form-control" value="{{ old('yt_link', $video->yt_link) }}" required>
+            <label for="link_youtube" class="form-label">Link YouTube</label>
+            <input type="url" name="link_youtube" id="link_youtube" class="form-control" 
+                   value="{{ old('link_youtube', $video->link_youtube) }}" required>
         </div>
 
         <div class="mb-3">
-            <label for="author" class="form-label">Autore</label>
-            <input type="text" name="author" id="author" class="form-control" value="{{ old('author', $video->author) }}" required>
+            <label for="autore_nome" class="form-label">Autore</label>
+            <input type="text" name="autore_nome" id="autore_nome" class="form-control" 
+                   value="{{ old('autore_nome', $video->autore->nome ?? '') }}" required>
+            <small class="form-text text-muted">Inserisci il nome dell'autore. Se non esiste, verrà creato automaticamente.</small>
         </div>
 
         <div class="d-flex justify-content-between">

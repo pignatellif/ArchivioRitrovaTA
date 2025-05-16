@@ -5,18 +5,23 @@
 @endpush
 
 @section('content')
-    <!-- HERO SECTION -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h2>Le nostre serie</h2>
-            <hr class="border-light w-25 mx-auto my-3">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. <br> Architecto amet magnam fugiat repellat rerum quis vero earum, sed optio modi saepe expedita culpa? Fuga quaerat fugit repellat, dolor illum cumque?</p>
-        </div>
-    </section>
 
-    <div class="series-section">
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-container">
+        <h2>Archivio Regionale dei Filmini di Famiglia</h2>
+        <p>Archivio RitrovaTA raccoglie e valorizza i filmini di famiglia della Puglia, custodendo la memoria privata come patrimonio collettivo.</p>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="series-section">
+    <div class="series-container">
         @include('partials.series_list', ['series' => $series])
     </div>
+</section>
+
 @endsection
 
 @push('scripts')

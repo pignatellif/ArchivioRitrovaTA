@@ -6,17 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('tag_video', function (Blueprint $table) {
+        Schema::create('serie_video', function (Blueprint $table) {
+            $table->foreignId('serie_id')->constrained('series')->onDelete('cascade');
             $table->foreignId('video_id')->constrained('videos')->onDelete('cascade');
-            $table->foreignId('tag_id')->constrained('tags')->onDelete('cascade');
-            $table->primary(['video_id', 'tag_id']);
+            $table->primary(['serie_id', 'video_id']);
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('tag_video');
+        Schema::dropIfExists('tag_serie_video');
     }
 };

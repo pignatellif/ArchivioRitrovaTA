@@ -12,7 +12,7 @@ class Autore extends Model
     // Specifica il nuovo nome della tabella
     protected $table = 'autores';
 
-    protected $fillable = ['nome', 'anno_nascita'];
+    protected $fillable = ['nome', 'anno_nascita', 'biografia', 'immagine_profilo'];
 
     public function videos()
     {

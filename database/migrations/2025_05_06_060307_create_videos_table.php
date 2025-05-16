@@ -14,20 +14,22 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
             $table->string('titolo');
-            $table->integer('anno');
+            $table->integer('anno')->nullable();
             $table->integer('durata_secondi');
             $table->string('formato')->nullable();
             $table->text('descrizione')->nullable();
             $table->string('famiglia')->nullable();
-            $table->string('luogo')->nullable();
             $table->string('link_youtube')->nullable();
-            $table->unsignedBigInteger('autore_id'); // Chiave esterna
 
-            // Chiave esterna aggiornata
-            $table->foreign('autore_id')
-                  ->references('id')
-                  ->on('autores') // Nome corretto della tabella
-                  ->onDelete('cascade');
+            // Foreign key per autore
+            $table->foreignId('autore_id')
+                ->constrained('autores')
+                ->onDelete('cascade');
+
+            // Foreign key per location
+            $table->foreignId('location_id')
+                ->constrained('locations')
+                ->onDelete('cascade');
 
             $table->timestamps();
         });
