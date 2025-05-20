@@ -116,14 +116,14 @@ body {
 
 .event-section .card-img-top {
     border-radius: 0;
-    height: 550px;
+    height: 600px;
     object-fit: cover; /* Adatta l'immagine */
     background-color: #f4f4f9;
 }
 
 .event-section .card-body {
     background-color: #fdf0d5;
-    height: 250px;
+    height: 300px;
     padding: 20px;
 }
 

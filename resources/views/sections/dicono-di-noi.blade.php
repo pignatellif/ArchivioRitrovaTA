@@ -1,3 +1,10 @@
+@extends('layouts.app')
+<link rel="stylesheet" href="{{ asset('css/dicono-di-noi.css') }}">
+@push('styles')
+
+@endpush
+
+@section('content')
 <section class="testimonials-section">
     <h2 class="section-title">Dicono di noi</h2>
     <div class="testimonials-container">
@@ -15,3 +22,8 @@
         </div>
     </div>
 </section>
+@endsection
+
+@push('scripts')
+<script src="{{ asset('js/dicono-di-noi.js') }}"></script>
+@endpush

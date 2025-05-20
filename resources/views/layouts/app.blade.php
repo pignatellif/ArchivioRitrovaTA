@@ -42,7 +42,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('fuori_dal_frame') }}">Fuori dal frame</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('eventi') }}">Eventi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('sostienici') }}">Sostienici</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Dicono di noi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('dicono_di_noi') }}">Dicono di noi</a></li>
                 </ul>
             </div>
         </div>
