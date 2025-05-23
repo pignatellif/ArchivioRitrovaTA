@@ -76,7 +76,7 @@
 
 <div class="section-divider"></div>
 
-<section class="archive-section">
+<section class="archive-section reverse-order fixed-order">
     <div class="archive-half text">
         <h4>Archivio</h4>
         <h2>Ogni filmato è una storia che torna a vivere</h2>
@@ -92,7 +92,7 @@
 
 <div class="section-divider"></div>
 
-<section class="archive-section">
+<section class="archive-section fixed-order">
     <div class="archive-half image">
         <img src="{{ asset('img/home/image2.png') }}" alt="Archivio" class="archive-image">
     </div>
@@ -108,7 +108,7 @@
 
 <div class="section-divider"></div>
 
-<section class="archive-section">
+<section class="archive-section reverse-order fixed-order">
     <div class="archive-half text">
         <h4>Fuori dal Tacco</h4>
         <h2>Non solo Puglia.</h2>
@@ -124,7 +124,7 @@
 
 <div class="section-divider"></div>
 
-<section class="archive-section">
+<section class="archive-section fixed-order">
     <div class="archive-half image">
         <img src="{{ asset('img/home/fuori-dal-frame.png') }}" alt="Archivio" class="archive-image">
     </div>

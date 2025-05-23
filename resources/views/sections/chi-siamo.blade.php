@@ -100,6 +100,14 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
+<section class="spacer-section">
+    <div class="container">
+        <!-- Spazio per separare il contenuto dal footer -->
+    </div>
+</section>
+
 @endsection
 
 @push('scripts')

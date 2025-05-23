@@ -9,6 +9,7 @@ use App\Models\Tag;
 use App\Models\Video;
 use App\Models\Location;
 use App\Models\Evento;
+use App\Models\Riconoscimento;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Collection;
@@ -381,6 +382,11 @@ class SectionController extends Controller
 
     public function diconoDiNoi()
     {
-        return view('sections.dicono-di-noi');
+        $riconoscimenti = Riconoscimento::orderBy('data_pubblicazione', 'desc')
+                                      ->orderBy('created_at', 'desc')
+                                      ->get();
+        
+        return view('sections.dicono-di-noi', compact('riconoscimenti'));
     }
+
 }

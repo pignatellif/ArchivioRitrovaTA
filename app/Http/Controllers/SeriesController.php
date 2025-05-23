@@ -13,23 +13,53 @@ class SeriesController extends Controller
 {
     public function index()
     {
-        $series = Serie::all();
+        // Aggiungi with per caricare anche i video per il conteggio
+        $series = Serie::with('videos')->get();
         return view('admin.series.index', compact('series'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $videos = Video::with('tags')->get();
+        $query = Video::query();
+        
+        // Applica filtri se presenti
+        if ($request->filled('titolo')) {
+            $query->where('titolo', 'like', '%' . $request->titolo . '%');
+        }
+        if ($request->filled('anno')) {
+            $query->where('anno', $request->anno);
+        }
+        if ($request->filled('formato')) {
+            $query->where('formato', $request->formato);
+        }
+        if ($request->filled('famiglia')) {
+            $query->where('famiglia', $request->famiglia);
+        }
+        if ($request->filled('autore')) {
+            $query->whereHas('autore', function($q) use ($request) {
+                $q->where('nome', $request->autore);
+            });
+        }
+        if ($request->filled('luogo')) {
+            $query->whereHas('location', function($q) use ($request) {
+                $q->where('name', $request->luogo);
+            });
+        }
+        if ($request->filled('tag')) {
+            $query->whereHas('tags', function($q) use ($request) {
+                $q->where('nome', $request->tag);
+            });
+        }
     
-        // Filtri distinti
-        $years = Video::select('anno')->distinct()->orderBy('anno', 'desc')->pluck('anno');
-        $formats = Video::select('formato')->distinct()->whereNotNull('formato')->pluck('formato');
-        $families = Video::select('famiglia')->distinct()->whereNotNull('famiglia')->pluck('famiglia');
-        $authors = Autore::pluck('nome', 'id');
-        $locations = Location::pluck('name', 'id');
-        $tags = Tag::pluck('nome', 'id');
-    
-        return view('admin.series.create', compact('videos', 'years', 'formats', 'authors', 'locations', 'families', 'tags'));
+        return view('admin.series.create', [
+            'availableVideos' => $query->with(['autore', 'location', 'tags'])->get(),
+            'anni' => Video::distinct()->pluck('anno')->filter()->sort(),
+            'formati' => Video::distinct()->pluck('formato')->filter()->sort(),
+            'famiglie' => Video::distinct()->pluck('famiglia')->filter()->sort(),
+            'autori' => Autore::pluck('nome')->sort(),
+            'luoghi' => Location::pluck('name')->sort(),
+            'tags' => Tag::pluck('nome')->sort(),
+        ]);
     }
        
     public function store(Request $request)
@@ -150,14 +180,24 @@ class SeriesController extends Controller
             ->with('success', 'Serie aggiornata con successo!');
     }
 
-    public function destroy(Serie $series)
+    public function destroy(Serie $serie)
     {
-        // Rimuovi prima le relazioni con i video
-        $series->videos()->detach();
-        
-        // Elimina la serie
-        $series->delete();
-        
-        return redirect()->route('series.index')->with('success', 'Serie eliminata con successo.');
+        try {
+            // Rimuovi prima le relazioni con i video
+            $serie->videos()->detach();
+            
+            // Elimina la serie
+            $deleted = $serie->delete();
+            
+            if ($deleted) {
+                return redirect()->route('series.index')->with('success', 'Serie eliminata con successo.');
+            } else {
+                return redirect()->route('series.index')->with('error', 'Errore durante l\'eliminazione della serie.');
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('Errore eliminazione serie: ' . $e->getMessage());
+            return redirect()->route('series.index')->with('error', 'Errore durante l\'eliminazione: ' . $e->getMessage());
+        }
     }
 }

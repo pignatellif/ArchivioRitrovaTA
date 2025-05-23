@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/fuori-dal-frame.css') }}">
+<link rel="stylesheet" href="{{ asset('css/autore.css') }}">
 @endpush
 
 @section('content')
 <section class="hero-section">
-    <div class="container py-5">
-        <div class="row align-items-center">
-            <div class="col-md-4 text-center mb-4 mb-md-0">
-                <img src="{{ asset($autore->immagine_profilo) }}" alt="{{ $autore->nome }}" class="img-fluid rounded shadow">
+    <div class="container">
+        <div class="row">
+            <div class="image-container">
+                <img src="{{ asset($autore->immagine_profilo) }}" alt="{{ $autore->nome }}" class="profile-image">
             </div>
-            <div class="col-md-8">
+            <div class="text-container">
                 <h2>{{ $autore->nome }}</h2>
                 @if ($autore->anno_nascita)
                     <p><strong>Anno di nascita:</strong> {{ $autore->anno_nascita }}</p>
@@ -27,9 +27,15 @@
     </div>
 </section>
 
-<div class="container">
-    <h3 class="mb-4">I suoi video</h3>
+<section id="dynamicViewSection" class="dynamic-view-section">
+    <h3 class="video-container">I suoi video</h3>
     @include('partials.grid', ['videos' => $videos])
-</div>
+</section>
+
+<section class="spacer-section">
+    <div class="container">
+        <!-- Spazio per separare il contenuto dal footer -->
+    </div>
+</section>
 
 @endsection

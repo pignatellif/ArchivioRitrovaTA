@@ -191,8 +191,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function initLeafletMap(locations) {
         const map = L.map("map", { scrollWheelZoom: false }).setView(
-            [41.8719, 12.5674],
-            6
+            [40.7928, 17.1012],
+            8
         );
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

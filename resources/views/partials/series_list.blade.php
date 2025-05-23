@@ -24,7 +24,6 @@
         <button class="arrow__btn right-arrow" onclick="scrollCarousel({{ $loop->index }}, 1)"><i class="fa-solid fa-caret-right"></i></button>
     </div>
 
-    <div class="section-divider"></div>
 </div>
 @endforeach
 {{ $series->links() }}

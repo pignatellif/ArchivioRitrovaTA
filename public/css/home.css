@@ -250,6 +250,32 @@ body {
     color: #003049;
 }
 
+@media (max-width: 768px) {
+    .welcome-section {
+        padding: 2rem 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .welcome-container {
+        padding: 0;
+    }
+
+    .welcome-logo {
+        width: 180px;
+        margin-bottom: 2rem;
+    }
+
+    .welcome-heading {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-text {
+        font-size: 1rem;
+    }
+}
+
 /* SEZIONE PROGETTI */
 .progetti {
     background-color: #fdf0d5;
@@ -473,16 +499,42 @@ body {
 }
 
 @media (max-width: 768px) {
+    .archive-section.fixed-order {
+        flex-direction: column;
+    }
+
+    .archive-section.fixed-order .archive-half.text {
+        order: 2; /* Il testo va sotto */
+    }
+
+    .archive-section.fixed-order .archive-half.image {
+        order: 1; /* L'immagine va sopra */
+    }
+
     .archive-section {
         flex-direction: column;
+        height: auto;
     }
 
     .archive-half {
         width: 100%;
+        padding: 2rem 1.5rem;
     }
 
     .archive-half.image img {
         height: auto;
+        max-height: 300px;
+        object-fit: cover;
+    }
+
+    .archive-half.text h2 {
+        font-size: 1.8rem;
+    }
+
+    .archive-button {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
     }
 }
 
@@ -564,7 +616,30 @@ body {
 }
 
 @media (max-width: 768px) {
-    .contact-info {
+    .contact-section {
+        padding: 3rem 1rem;
+    }
+
+    .contact-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .contact-header h5 {
+        font-size: 1rem;
+    }
+
+    .contact-info p {
+        font-size: 0.95rem;
+    }
+
+    .contact-social {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .contact-button a {
+        width: 100%;
+        max-width: 280px;
         text-align: center;
     }
 }

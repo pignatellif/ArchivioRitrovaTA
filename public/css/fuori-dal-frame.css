@@ -11,6 +11,11 @@ body {
     background-color: #003049;
 }
 
+.spacer-section {
+    height: 5vh;
+    background-color: #fdf0d5;
+}
+
 /* sezione iniziale */
 .hero-section {
     width: 100vw;
@@ -79,11 +84,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.spacer-section {
-    height: 5vh;
-    background-color: #fdf0d5;
 }
 
 .image-personaggi {

@@ -21,6 +21,7 @@ body {
 
 .search-section .search-bar {
     width: 50vw;
+    min-width: 300px;
     margin: 0 auto;
     padding: 20px;
     background-color: #fdf0d5;
@@ -118,6 +119,7 @@ body {
     height: 600px;
     object-fit: cover; /* Adatta l'immagine */
     background-color: #f4f4f9;
+    width: 100%;
 }
 
 .event-section .card-body {
@@ -143,8 +145,8 @@ body {
     margin-bottom: 10px;
 }
 
-.event-section .card-text small {
-    color: #669bbc; /* Testo secondario */
+.event-section .card-text .text-muted {
+    color: #669bbc;
 }
 
 /* Paginazione */
@@ -188,14 +190,16 @@ body {
     border-color: #007bff;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Miglior gestione responsive delle card e della search bar */
+@media (max-width: 1200px) {
     .search-section h2 {
         font-size: 20px;
     }
 
     .search-section .search-bar {
-        padding: 15px;
+        width: 85vw;
+        padding: 10px;
+        min-width: unset;
     }
 
     .search-section .form-control,
@@ -204,10 +208,63 @@ body {
     }
 
     .event-section .card-img-top {
-        height: 150px;
+        height: 500px;
+    }
+
+    .event-section .card-body {
+        height: 170px;
+        padding: 10px;
     }
 
     .event-section .card-title {
         font-size: 16px;
+    }
+
+    .event-section .card-text {
+        font-size: 12px;
+        line-height: 1.2;
+        margin-bottom: 5px;
+    }
+}
+
+/* 2 card per riga sopra i 1500px */
+@media (max-width: 1500px) {
+    .event-row .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* 1 card per riga su mobile e tablet */
+@media (max-width: 900px) {
+    .event-row .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .event-section {
+        padding: 0 0.5rem;
+    }
+    .event-section .card-img-top {
+        height: 400px;
+        object-fit: contain;
+        background-color: #fdf0d5;
+    }
+    .event-section .card-body {
+        height: auto;
+        padding: 8px;
+    }
+}
+
+/* Migliora padding e leggibilità su dispositivi piccoli */
+@media (max-width: 600px) {
+    .search-section .search-bar {
+        width: 98vw;
+        padding: 5px;
+    }
+    .event-section {
+        padding: 0;
+    }
+    .section-divider {
+        height: 2px;
     }
 }

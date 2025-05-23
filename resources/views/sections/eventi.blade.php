@@ -26,7 +26,7 @@
 <div class="section-divider"></div>
 
 <section class="event-section">
-    <div class="row mt-4 view-list">
+    <div class="row mt-4 view-list event-row">
         @forelse($events as $event)
             <div class="col-md-4">
                 <div class="card mb-4">
