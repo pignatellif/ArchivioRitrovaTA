@@ -69,7 +69,7 @@
                     Archivio RitrovaTA raccoglie e valorizza i filmini di famiglia della Puglia, custodendo la memoria privata come patrimonio collettivo. Un viaggio nella memoria, per riscoprire le storie che ci uniscono.
                 </p>
             </div>
-            <a href="#" class="info-button">Scopri Chi Siamo</a>
+            <a href="{{ route('chi_siamo') }}" class="info-button">Scopri Chi Siamo</a>
         </div>
     </div>
 </section>
@@ -118,7 +118,7 @@
         <a href="{{ route('fuori_dal_tacco') }}" class="archive-button">Guarda i filmati</a>
     </div>
     <div class="archive-half image">
-        <img src="{{ asset('img/home/image3.png') }}" alt="Archivio" class="archive-image">
+        <img src="{{ asset('img/home/fuori-dal-tacco.png') }}" alt="Archivio" class="archive-image">
     </div>
 </section>
 
@@ -126,7 +126,7 @@
 
 <section class="archive-section">
     <div class="archive-half image">
-        <img src="{{ asset('img/home/image4.png') }}" alt="Archivio" class="archive-image">
+        <img src="{{ asset('img/home/fuori-dal-frame.png') }}" alt="Archivio" class="archive-image">
     </div>
     <div class="archive-half text">
         <h4>Fuori dal Frame</h4>

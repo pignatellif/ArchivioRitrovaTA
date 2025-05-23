@@ -16,34 +16,39 @@
 <div class="section-divider"></div>
 
 <section class="archive-section">
-    <div class="archive-half text">
-        <h2>I Personaggi</h2>
-        <p>
-            Conosci i protagonisti dei filmati. Le loro storie, i loro ricordi e le loro emozioni sono il cuore pulsante di questo archivio.
-        </p>
-        <a href="{{ route('personaggi') }}" class="archive-button">Guarda i filmati</a>
+    <div class="archive-half image image-personaggi">
+        <div class="overlay">
+            <div class="text-content">
+                <h2>I Personaggi</h2>
+                <p>
+                    Conosci i protagonisti dei filmati. Le loro storie, i loro ricordi e le loro emozioni sono il cuore pulsante di questo archivio.
+                </p>
+                <a href="{{ route('personaggi') }}" class="archive-button">Guarda i filmati</a>
+            </div>
+        </div>
     </div>
-    <div class="archive-half image">
-        <img src="{{ asset('img/home/image3.png') }}" alt="Archivio" class="archive-image">
+
+    <div class="archive-half image image-autori">
+        <div class="overlay">
+            <div class="text-content">
+                <h2>Gli Autori</h2>
+                <p>
+                    Scopri chi ha reso possibile tutto questo. Gli autori sono le menti creative e i narratori che hanno dato vita a queste storie uniche.
+                </p>
+                <a href="{{ route('autori') }}" class="archive-button">Scopri chi c'è dietro</a>
+            </div>
+        </div>
     </div>
 </section>
 
 <div class="section-divider"></div>
 
-<section class="archive-section">
-    <div class="archive-half image">
-        <img src="{{ asset('img/home/image4.png') }}" alt="Archivio" class="archive-image">
-    </div>
-    <div class="archive-half text">
-        <h2>Gli Autori</h2>
-        <p>
-            Scopri chi ha reso possibile tutto questo. Gli autori sono le menti creative e i narratori che hanno dato vita a queste storie uniche.
-        </p>
-        <a href="{{ route('autori') }}" class="archive-button">Scopri chi c'è dietro</a>
+<section class="spacer-section">
+    <div class="container">
+        <!-- Spazio per separare il contenuto dal footer -->
     </div>
 </section>
 
-<div class="section-divider"></div>
 @endsection
 
 @section('scripts')

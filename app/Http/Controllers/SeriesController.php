@@ -22,9 +22,9 @@ class SeriesController extends Controller
         $videos = Video::with('tags')->get();
     
         // Filtri distinti
-        $years = Video::select('anno')->distinct()->pluck('anno');
-        $formats = Video::select('formato')->distinct()->pluck('formato');
-        $families = Video::select('famiglia')->distinct()->pluck('famiglia');
+        $years = Video::select('anno')->distinct()->orderBy('anno', 'desc')->pluck('anno');
+        $formats = Video::select('formato')->distinct()->whereNotNull('formato')->pluck('formato');
+        $families = Video::select('famiglia')->distinct()->whereNotNull('famiglia')->pluck('famiglia');
         $authors = Autore::pluck('nome', 'id');
         $locations = Location::pluck('name', 'id');
         $tags = Tag::pluck('nome', 'id');
@@ -32,7 +32,6 @@ class SeriesController extends Controller
         return view('admin.series.create', compact('videos', 'years', 'formats', 'authors', 'locations', 'families', 'tags'));
     }
        
-
     public function store(Request $request)
     {
         $request->validate([
@@ -53,96 +52,112 @@ class SeriesController extends Controller
         return redirect()->route('series.index')->with('success', 'Serie creata con successo.');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, Serie $serie)
     {
-        $series = Serie::with('videos')->findOrFail($id);
+        $serie->load('videos');
     
-        // Video già nella serie
-        $selectedIds = $series->videos->pluck('id');
-    
-        // Query di base
-        $query = Video::with(['autore', 'location', 'tags']);
-    
-        // Applica i filtri, se presenti
-        if ($request->filled('title')) {
-            $query->where('titolo', 'like', '%' . $request->title . '%');
+        // Video già associati alla serie
+        $selectedVideos = $serie->videos->pluck('id')->toArray();
+        
+        // Query base per i video disponibili (non ancora associati)
+        $availableQuery = Video::whereNotIn('id', $selectedVideos);
+        
+        // Applica i filtri se presenti
+        if ($request->filled('titolo')) {
+            $availableQuery->where('titolo', 'LIKE', '%' . $request->titolo . '%');
         }
-    
-        if ($request->filled('year')) {
-            $query->where('anno', $request->year);
+        
+        if ($request->filled('anno')) {
+            $availableQuery->where('anno', $request->anno);
         }
-    
-        if ($request->filled('format')) {
-            $query->where('formato', $request->format);
+        
+        if ($request->filled('formato')) {
+            $availableQuery->where('formato', $request->formato);
         }
-    
-        if ($request->filled('author')) {
-            $query->where('autore_id', $request->author);
+        
+        if ($request->filled('famiglia')) {
+            $availableQuery->where('famiglia', $request->famiglia);
         }
-    
-        if ($request->filled('location')) {
-            $query->where('location_id', $request->location);
-        }
-    
-        if ($request->filled('family')) {
-            $query->where('famiglia', $request->family);
-        }
-    
-        if ($request->filled('tags')) {
-            $tagIds = explode(',', $request->tags);
-            $query->whereHas('tags', function ($q) use ($tagIds) {
-                $q->whereIn('tags.id', $tagIds);
+        
+        if ($request->filled('tag')) {
+            $availableQuery->whereHas('tags', function($query) use ($request) {
+                $query->where('nome', $request->tag);
             });
-        }        
+        }
+        
+        // Ottieni i video filtrati con i loro tag
+        $availableVideos = $availableQuery->with('tags')->orderBy('titolo')->get();
     
-        // Escludi video già nella serie
-        $availableVideos = $query->whereNotIn('id', $selectedIds)->get();
-    
-        // Tutti i dati per i filtri
-        $formats = Video::select('formato')->distinct()->pluck('formato');
-        $families = Video::select('famiglia')->distinct()->pluck('famiglia');
-        $years = Video::select('anno')->distinct()->pluck('anno');
-        $authors = Autore::pluck('nome', 'id');
-        $locations = Location::pluck('name', 'id');
-        $tags = Tag::pluck('nome', 'id');
+        // Dati per i filtri (solo dai video non ancora associati)
+        $allAvailableVideos = Video::whereNotIn('id', $selectedVideos);
+        
+        $anni = $allAvailableVideos->select('anno')
+                    ->distinct()
+                    ->whereNotNull('anno')
+                    ->orderBy('anno', 'desc')
+                    ->pluck('anno');
+                    
+        $formati = $allAvailableVideos->select('formato')
+                      ->distinct()
+                      ->whereNotNull('formato')
+                      ->orderBy('formato')
+                      ->pluck('formato');
+                      
+        $famiglie = $allAvailableVideos->select('famiglia')
+                       ->distinct()
+                       ->whereNotNull('famiglia')
+                       ->orderBy('famiglia')
+                       ->pluck('famiglia');
+        
+        // Per i tag, dobbiamo fare una query più complessa
+        $tags = Tag::whereHas('videos', function($query) use ($selectedVideos) {
+                    $query->whereNotIn('videos.id', $selectedVideos);
+                })
+                ->distinct()
+                ->orderBy('nome')
+                ->pluck('nome');
     
         return view('admin.series.edit', compact(
-            'series',
+            'serie',
             'availableVideos',
-            'formats',
-            'families',
-            'years',
-            'authors',
-            'locations',
+            'anni',
+            'formati',
+            'famiglie',
             'tags'
         ));
-    }       
+    }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Serie $serie)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descrizione' => 'nullable|string',
-            'selected_videos' => 'nullable|string',
+            'videos' => 'array',
+            'videos.*' => 'exists:videos,id',
         ]);
 
-        $serie = Serie::findOrFail($id);
-
+        // Aggiorna i dati della serie
         $serie->update([
-            'nome' => $request->nome,
-            'descrizione' => $request->descrizione,
+            'nome' => $validated['nome'],
+            'descrizione' => $validated['descrizione'] ?? null,
         ]);
 
-        $videoIds = $request->selected_videos ? explode(',', $request->selected_videos) : [];
+        // Aggiorna la relazione many-to-many con i video
+        $serie->videos()->sync($validated['videos'] ?? []);
 
-        $serie->videos()->sync($videoIds);
-
-        return redirect()->route('series.index')->with('success', 'Serie aggiornata con successo!');
+        return redirect()
+            ->route('series.edit', $serie)
+            ->with('success', 'Serie aggiornata con successo!');
     }
 
     public function destroy(Serie $series)
     {
+        // Rimuovi prima le relazioni con i video
+        $series->videos()->detach();
+        
+        // Elimina la serie
         $series->delete();
+        
         return redirect()->route('series.index')->with('success', 'Serie eliminata con successo.');
     }
 }

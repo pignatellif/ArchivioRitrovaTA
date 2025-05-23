@@ -31,7 +31,7 @@
 </section>
 
 <section id="dynamicViewSection" class="dynamic-view-section">
-    <!-- Le viste parziali 'grid' e 'map' verranno caricate qui dinamicamente -->
+    <!-- La vista parziale 'grid' verrà caricata qui dinamicamente -->
 </section>
 
 <!-- Sidebar a Comparsa -->
@@ -143,24 +143,6 @@
                 </div>
             </div>
             
-            <div class="filter-row">
-                <!-- Filtro Luogo -->
-                <div class="mb-3">
-                    <div class="slider-container">
-                        <span class="slider-label">Luogo</span>
-                        <div class="input-wrapper select-wrapper">
-                            <select class="form-control filter" id="filterLocation">
-                                <option value="">Tutti</option>
-                                @foreach($locations as $location)
-                                    <option value="{{ $location }}">{{ $location }}</option>
-                                @endforeach
-                            </select>
-                            <i class="fa-solid fa-caret-down"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="filter-row">
                 <!-- Filtro Luogo -->
                 <div class="mb-3">

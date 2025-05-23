@@ -23,8 +23,9 @@ return new class extends Migration
 
             // Foreign key per autore
             $table->foreignId('autore_id')
+                ->nullable() 
                 ->constrained('autores')
-                ->onDelete('cascade');
+                ->onDelete('set null'); 
 
             // Foreign key per location
             $table->foreignId('location_id')

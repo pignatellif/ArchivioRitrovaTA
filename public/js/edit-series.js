@@ -1,7 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ JavaScript caricato correttamente!");
+    // Salva stato del form principale prima di applicare i filtri
+    const filterForm = document.querySelector('form[action*="series.edit"]');
+    if (filterForm) {
+        filterForm.addEventListener("submit", function () {
+            localStorage.setItem(
+                "seriesFormData",
+                JSON.stringify({
+                    name: document.getElementById("name").value,
+                    description: document.getElementById("description").value,
+                    selectedVideos: document.getElementById(
+                        "selectedVideosInput"
+                    ).value,
+                })
+            );
+        });
+    }
 
-    // 🔁 Ripristina stato del form da localStorage
+    // Ripristina subito dopo il caricamento (prima che Blade sovrascriva!)
     const saved = JSON.parse(localStorage.getItem("seriesFormData"));
     if (saved) {
         document.getElementById("name").value = saved.name || "";
@@ -97,23 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     moveToSeriesList(this);
                 }
             });
-    }
-
-    // 💾 Salva stato prima di applicare i filtri
-    const filterForm = document.querySelector('form[action*="series.edit"]');
-    if (filterForm) {
-        filterForm.addEventListener("submit", function () {
-            localStorage.setItem(
-                "seriesFormData",
-                JSON.stringify({
-                    name: document.getElementById("name").value,
-                    description: document.getElementById("description").value,
-                    selectedVideos: document.getElementById(
-                        "selectedVideosInput"
-                    ).value,
-                })
-            );
-        });
     }
 });
 

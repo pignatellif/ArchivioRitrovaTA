@@ -8,6 +8,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\RiconoscimentoController;
 
 use Illuminate\Http\Request;
 
@@ -23,7 +25,6 @@ Route::controller(SectionController::class)->group(function () {
     Route::get('/fuori-dal-frame', 'fuoriDalFrame')->name('fuori_dal_frame');
     Route::get('/fuori-dal-tacco', 'fuoriDalTacco')->name('fuori_dal_tacco');
     Route::get('/eventi', 'eventi')->name('eventi');
-    Route::get('/sostienici', 'sostienici')->name('sostienici');
     Route::get('/chi-siamo', 'info')->name('chi_siamo');
     Route::get('/fuori-dal-frame/autori', 'autori')->name('autori');
     Route::get('/fuori-dal-frame/autori/{id}', 'showAutore')->name('autore.show');
@@ -67,25 +68,50 @@ Route::middleware(['auth'])->group(function () {
     // SERIE
     // ==========================
     Route::prefix('admin/series')->name('series.')->group(function () {
-        Route::get('/', [SeriesController::class, 'index'])->name('index'); 
-        Route::get('/create', [SeriesController::class, 'create'])->name('create'); 
-        Route::post('/', [SeriesController::class, 'store'])->name('store'); 
-        Route::get('/{id}/edit', [SeriesController::class, 'edit'])->name('edit');  
-        Route::put('/{id}', [SeriesController::class, 'update'])->name('update');        
-        Route::delete('/{series}', [SeriesController::class, 'destroy'])->name('destroy'); 
+        Route::get('/', [SeriesController::class, 'index'])->name('index');
+        Route::get('/create', [SeriesController::class, 'create'])->name('create');
+        Route::post('/', [SeriesController::class, 'store'])->name('store');
+        Route::get('/{serie}/edit', [SeriesController::class, 'edit'])->name('edit');    
+        Route::put('/{serie}', [SeriesController::class, 'update'])->name('update');
+        Route::delete('/{serie}', [SeriesController::class, 'destroy'])->name('destroy');
     });    
 
     // ==========================
     // EVENTI
     // ==========================
     Route::prefix('admin/events')->name('events.')->group(function () {
-        Route::get('/', [EventController::class, 'index'])->name('index');  // Lista
-        Route::get('/create', [EventController::class, 'create'])->name('create');  // Form creazione
-        Route::post('/', [EventController::class, 'store'])->name('store');  // Salvataggio
-        Route::get('/{event}/edit', [EventController::class, 'edit'])->name('edit');  // Modifica
-        Route::put('/{event}', [EventController::class, 'update'])->name('update');  // Aggiornamento
-        Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');  // Eliminazione
+        Route::get('/', [EventController::class, 'index'])->name('index');                  // Lista
+        Route::get('/create', [EventController::class, 'create'])->name('create');          // Form creazione
+        Route::post('/', [EventController::class, 'store'])->name('store');                 // Salvataggio
+        Route::get('/{event}/edit', [EventController::class, 'edit'])->name('edit');        // Modifica
+        Route::put('/{event}', [EventController::class, 'update'])->name('update');         // Aggiornamento
+        Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');    // Eliminazione
         Route::delete('/{event}/remove-cover-image', [EventController::class, 'removeCoverImage'])->name('removeCoverImage');
     });
 
+    // ==========================
+    // AUTORI
+    // ==========================
+    Route::prefix('admin/authors')->name('authors.')->group(function () {
+        Route::get('/', [AuthorController::class, 'index'])->name('index');                 // Lista autori
+        Route::get('/create', [AuthorController::class, 'create'])->name('create');         // Form creazione
+        Route::post('/', [AuthorController::class, 'store'])->name('store');                // Salvataggio nuovo autore
+        Route::get('/{author}/edit', [AuthorController::class, 'edit'])->name('edit');      // Form modifica
+        Route::put('/{author}', [AuthorController::class, 'update'])->name('update');       // Aggiornamento autore
+        Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');  // Eliminazione autore
+    });
+
+    // ==========================
+    // RICONOSCIMENTI
+    // ==========================
+    Route::prefix('admin/riconoscimenti')->name('riconoscimenti.')->group(function () {
+        Route::get('/', [RiconoscimentoController::class, 'index'])->name('index');
+        Route::get('/create', [RiconoscimentoController::class, 'create'])->name('create');
+        Route::post('/', [RiconoscimentoController::class, 'store'])->name('store');
+        Route::get('/{riconoscimento}/edit', [RiconoscimentoController::class, 'edit'])->name('edit');
+        Route::put('/{riconoscimento}', [RiconoscimentoController::class, 'update'])->name('update');
+        Route::delete('/{riconoscimento}', [RiconoscimentoController::class, 'destroy'])->name('destroy');
+        Route::get('/{riconoscimento}', [RiconoscimentoController::class, 'show'])->name('show');
+    });
+    
 });

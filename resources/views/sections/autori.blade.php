@@ -12,43 +12,45 @@
     </div>
 </section>
 
-<div class="container py-5">
-    <div class="row">
-        @forelse($autori as $autore)
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body d-flex flex-column">
-                        {{-- Foto autore, se disponibile --}}
-                        <div class="mb-3 text-center">
-                            <img src="{{ asset('img/autori/placeholder.jpg') }}" alt="Foto di {{ $autore->nome }}"
-                                 class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+<section class="format-authors-section">
+    <div class="format-container">
+        @forelse($formati as $nomeFormato => $autori)
+            @if($autori->isNotEmpty())
+                <h3 class="format-name">{{ $nomeFormato }}</h3>
+                <div class="author-row">
+                    @foreach($autori as $autore)
+                        <div class="card author-card">
+                            <div class="card-body">
+                                {{-- Foto autore --}}
+                                <div class="text-center mb-3">
+                                    <img src="{{ asset($autore->immagine_profilo) }}" alt="Foto di {{ $autore->nome }}"
+                                         class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+
+                                <h5 class="card-title text-center">{{ $autore->nome }}</h5>
+
+                                @if ($autore->anno_nascita)
+                                    <p class="text-center text-muted">Nato nel {{ $autore->anno_nascita }}</p>
+                                @endif
+
+                                <div class="text-center mt-2">
+                                    <a href="{{ route('autore.show', $autore->id) }}" class="btn btn-outline-primary btn-sm">
+                                        Scopri i video
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-
-                        <h5 class="card-title text-center">{{ $autore->nome }}</h5>
-
-                        @if ($autore->anno_nascita)
-                            <p class="text-center text-muted">Nato nel {{ $autore->anno_nascita }}</p>
-                        @endif
-
-                        <p class="text-center mt-auto">
-                            <span class="badge bg-primary">{{ $autore->videos_count }} video</span>
-                        </p>
-
-                        <div class="text-center mt-3">
-                            <a href="{{ route('autore.show', $autore->id) }}" class="btn btn-outline-primary btn-sm">
-                                Scopri i video
-                            </a>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+                <div class="section-divider"></div>
+            @endif
         @empty
             <p class="text-center">Nessun autore trovato.</p>
         @endforelse
     </div>
-</div>
+</section>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script src="{{ asset('js/fuori-dal-frame.js') }}"></script>
-@endsection
+@endpush
