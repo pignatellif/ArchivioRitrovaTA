@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Autore extends Model
 {
-    use HasFactory;
-
-    // Specifica il nuovo nome della tabella
     protected $table = 'autores';
 
-    protected $fillable = ['nome', 'anno_nascita', 'biografia', 'immagine_profilo'];
+    protected $fillable = [
+        'nome', 'biografia', 'immagine_profilo', 'anno_nascita'
+    ];
 
     public function videos()
     {
@@ -21,6 +19,6 @@ class Autore extends Model
 
     public function formati()
     {
-        return $this->belongsToMany(Formato::class, 'formato_autore', 'autore_id', 'formato');
+        return $this->belongsToMany(Formato::class, 'autore_formato');
     }
 }

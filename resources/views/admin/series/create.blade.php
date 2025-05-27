@@ -42,7 +42,6 @@
                         <div class="border rounded p-2" style="max-height: 500px; overflow-y: auto;">
                             @foreach($availableVideos as $video)
                                 @php
-                                    // Controlla se il video è stato selezionato nei filtri
                                     $selectedVideos = request('form_videos', []);
                                     $isSelected = in_array($video->id, $selectedVideos);
                                 @endphp
@@ -52,8 +51,13 @@
                                         <strong>{{ $video->titolo }}</strong>
                                         <small class="text-muted d-block">
                                             Anno: {{ $video->anno }} | 
-                                            Formato: {{ $video->formato ?? 'N/D' }} | 
-                                            Famiglia: {{ $video->famiglia ?? 'N/D' }}
+                                            Formato: {{ $video->formato->nome ?? 'N/D' }} | 
+                                            Famiglie: 
+                                            @if($video->famiglie->count())
+                                                {{ $video->famiglie->pluck('nome')->join(', ') }}
+                                            @else
+                                                N/D
+                                            @endif
                                             @if($video->autore)
                                                 <br>Autore: {{ $video->autore->nome }}
                                             @endif
@@ -117,10 +121,8 @@
                 </h5>
 
                 <form method="GET" action="{{ route('series.create') }}" class="row g-3" id="filterForm">
-                    <!-- Campi nascosti per mantenere i dati del form principale -->
                     <input type="hidden" name="form_nome" value="" id="hidden_nome">
                     <input type="hidden" name="form_descrizione" value="" id="hidden_descrizione">
-                    <!-- Campo nascosto per mantenere le selezioni video -->
                     <div id="hidden_videos_container"></div>
                     
                     <div class="col-12">
@@ -248,7 +250,6 @@
 </div>
 
 <script>
-// Configurazione per il file JavaScript esterno
 window.seriesCreateConfig = {
     baseUrl: @json(route('series.create')),
     hasVideos: {{ $availableVideos->count() > 0 ? 'true' : 'false' }}

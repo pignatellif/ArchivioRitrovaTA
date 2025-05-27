@@ -31,7 +31,9 @@ class RiconoscimentoController extends Controller
             'estratto' => 'nullable|string',
         ]);
 
-        Riconoscimento::create($request->all());
+        Riconoscimento::create($request->only([
+            'titolo', 'fonte', 'url', 'data_pubblicazione', 'estratto'
+        ]));
 
         return redirect()->route('riconoscimenti.index')
             ->with('success', 'Riconoscimento aggiunto con successo.');
@@ -40,7 +42,7 @@ class RiconoscimentoController extends Controller
     // Mostra il form per modificare un riconoscimento
     public function edit(Riconoscimento $riconoscimento)
     {
-        return view('riconoscimenti.edit', compact('riconoscimento'));
+        return view('admin.riconoscimenti.edit', compact('riconoscimento'));
     }
 
     // Aggiorna un riconoscimento esistente
@@ -54,7 +56,9 @@ class RiconoscimentoController extends Controller
             'estratto' => 'nullable|string',
         ]);
 
-        $riconoscimento->update($request->all());
+        $riconoscimento->update($request->only([
+            'titolo', 'fonte', 'url', 'data_pubblicazione', 'estratto'
+        ]));
 
         return redirect()->route('riconoscimenti.index')
             ->with('success', 'Riconoscimento aggiornato con successo.');

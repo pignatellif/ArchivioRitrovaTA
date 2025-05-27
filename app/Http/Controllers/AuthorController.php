@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Autore;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AuthorController extends Controller
 {
@@ -16,7 +15,9 @@ class AuthorController extends Controller
 
     public function create()
     {
-        return view('admin.authors.create');
+        // Se vuoi visualizzare anche i formati disponibili per l'autore
+        $formati = \App\Models\Formato::all();
+        return view('admin.authors.create', compact('formati'));
     }
 
     public function store(Request $request)
@@ -26,6 +27,8 @@ class AuthorController extends Controller
             'anno_nascita' => 'nullable|integer',
             'biografia' => 'nullable|string',
             'immagine_profilo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'formati' => 'nullable|array',
+            'formati.*' => 'exists:formati,id',
         ]);
 
         $autore = new Autore();
@@ -41,12 +44,19 @@ class AuthorController extends Controller
 
         $autore->save();
 
+        // Gestione relazione con formati
+        if ($request->has('formati')) {
+            $autore->formati()->sync($request->formati);
+        }
+
         return redirect()->route('authors.index')->with('success', 'Autore creato con successo!');
     }
 
     public function edit(Autore $author)
     {
-        return view('admin.authors.edit', compact('author'));
+        $formati = \App\Models\Formato::all();
+        $author->load('formati');
+        return view('admin.authors.edit', compact('author', 'formati'));
     }
 
     public function update(Request $request, Autore $author)
@@ -56,6 +66,9 @@ class AuthorController extends Controller
             'anno_nascita' => 'nullable|integer',
             'biografia' => 'nullable|string',
             'immagine_profilo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_immagine_profilo' => 'nullable|boolean',
+            'formati' => 'nullable|array',
+            'formati.*' => 'exists:formati,id',
         ]);
 
         $author->nome = $request->nome;
@@ -81,6 +94,13 @@ class AuthorController extends Controller
 
         $author->save();
 
+        // Gestione relazione con formati
+        if ($request->has('formati')) {
+            $author->formati()->sync($request->formati);
+        } else {
+            $author->formati()->detach();
+        }
+
         return redirect()->route('authors.index')->with('success', 'Autore aggiornato con successo!');
     }
 
@@ -89,6 +109,9 @@ class AuthorController extends Controller
         if ($author->immagine_profilo && file_exists(public_path($author->immagine_profilo))) {
             unlink(public_path($author->immagine_profilo));
         }
+
+        // Rimuovi relazioni con formati
+        $author->formati()->detach();
 
         $author->delete();
 

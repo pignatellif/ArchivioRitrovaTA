@@ -33,6 +33,19 @@
         </div>
 
         <div class="mb-3">
+            <label for="formati" class="form-label">Formati associati</label>
+            <select name="formati[]" id="formati" class="form-select" multiple>
+                @foreach($formati as $formato)
+                    <option value="{{ $formato->id }}"
+                        {{ collect(old('formati'))->contains($formato->id) ? 'selected' : '' }}>
+                        {{ $formato->nome }}
+                    </option>
+                @endforeach
+            </select>
+            <small class="form-text text-muted">Tieni premuto CTRL o CMD per selezionare più formati</small>
+        </div>
+
+        <div class="mb-3">
             <label for="immagine_profilo" class="form-label">Immagine del Profilo</label>
             <input type="file" name="immagine_profilo" id="immagine_profilo" class="form-control">
         </div>

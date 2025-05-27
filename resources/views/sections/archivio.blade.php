@@ -6,11 +6,14 @@
 @endpush
 
 @section('content')
-
 <section class="hero-section">
-    <div class="hero-container">
-        <h2>Archivio Regionale dei Filmini di Famiglia</h2>
-        <p>Archivio RitrovaTA raccoglie e valorizza i filmini di famiglia della Puglia, custodendo la memoria privata come patrimonio collettivo.</p>
+    <div class="hero-overlay">
+        <div class="hero-text">
+            <h2>archivio</h2>
+            <hr>
+            <h3>Ogni pellicola è un ricordo che torna a parlare.</h3>
+            <p>Scopri i filmati che compongono la nostra memoria condivisa.</p>
+        </div>
     </div>
 </section>
 

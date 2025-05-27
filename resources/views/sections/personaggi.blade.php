@@ -1,17 +1,18 @@
 @extends('layouts.app')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/fuori-dal-frame.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/personaggi.css') }}">
 @endpush
 
 @section('content')
-
 <section class="hero-section">
-    <div class="hero-container">
-        <h2>I Personaggi</h2>
-        <p>
-            Una raccolta di voci autentiche. Ogni video racconta un frammento di vita, un ricordo, un volto che dà forma alla memoria collettiva.
-        </p>
+    <div class="hero-overlay">
+        <div class="hero-text">
+            <h2>I Personaggi</h2>
+            <hr>
+            <h3>I protagonisti dei nostri video.</h3>
+            <p>Una raccolta di voci autentiche. Ogni video racconta un frammento di vita, un ricordo, un volto che dà forma alla memoria collettiva.</p>
+        </div>
     </div>
 </section>
 

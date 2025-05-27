@@ -6,11 +6,14 @@
 @endpush
 
 @section('content')
-
 <section class="hero-section">
-    <div class="hero-container">
-        <h2>Fuori dal Tacco</h2>
-        <p>Esplora i filmini di famiglia che raccontano storie oltre i confini della Puglia, unendo memorie private e patrimonio collettivo.</p>
+    <div class="hero-overlay">
+        <div class="hero-text">
+            <h2>Fuori dal Tacco</h2>
+            <hr>
+            <h3>Storie in viaggio, memorie oltre la Puglia.</h3>
+            <p>Una raccolta di filmini girati in altre regioni d’Italia e del mondo. Perché la memoria non ha confini, e ogni sguardo racconta un altrove.</p>
+        </div>
     </div>
 </section>
 
@@ -143,24 +146,6 @@
                 </div>
             </div>
             
-            <div class="filter-row">
-                <!-- Filtro Luogo -->
-                <div class="mb-3">
-                    <div class="slider-container">
-                        <span class="slider-label">Luogo</span>
-                        <div class="input-wrapper select-wrapper">
-                            <select class="form-control filter" id="filterLocation">
-                                <option value="">Tutti</option>
-                                @foreach($locations as $location)
-                                    <option value="{{ $location }}">{{ $location }}</option>
-                                @endforeach
-                            </select>
-                            <i class="fa-solid fa-caret-down"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="filter-row">
                 <!-- Filtro Luogo -->
                 <div class="mb-3">

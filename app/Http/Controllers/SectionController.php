@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Autore;
+use App\Models\Formato;
 use App\Models\Serie;
 use App\Models\Tag;
 use App\Models\Video;
 use App\Models\Location;
 use App\Models\Evento;
 use App\Models\Riconoscimento;
+use App\Models\Famiglia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Collection;
@@ -18,33 +20,53 @@ class SectionController extends Controller
 {
     public function home()
     {
-        // Recupera i tre eventi più recenti
         $recentEvents = Evento::orderBy('start_date', 'desc')->take(3)->get();
-    
         return view('home', compact('recentEvents'));
     }
 
     public function index(Request $request)
     {
         $query = $request->input('query');
-
-        // Esegui la ricerca (su video, autori, ecc. a seconda delle tue necessità)
-        $risultati = Video::where('titolo', 'like', "%{$query}%")->get();
-
+        // Ricerca sia su video che su autori (esempio)
+        $risultati = [
+            'video' => Video::where('titolo', 'like', "%{$query}%")->get(),
+            'autori' => Autore::where('nome', 'like', "%{$query}%")->get()
+        ];
         return view('search.results', compact('query', 'risultati'));
     }
 
     public function video($id)
     {
-        $video = Video::findOrFail($id);
-        $video->youtube_id = $this->getYoutubeVideoId($video->yt_link);
-        return view('sections.video', compact('video'));
-    }
-
-    private function getYoutubeVideoId($url)
-    {
-        preg_match('/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/v\/|embed\/|shorts\/|.*[?&]v=))([^"&?\/\s]{11})/', $url, $matches);
-        return $matches[1] ?? null;
+        $video = Video::with(['tags', 'location', 'famiglie', 'series'])->findOrFail($id);
+    
+        $similarVideos = Video::where('id', '!=', $video->id)
+            ->where(function ($query) use ($video) {
+                $query->whereHas('tags', function ($q) use ($video) {
+                    $q->whereIn('tags.id', $video->tags->pluck('id'));
+                });
+    
+                if ($video->location_id) {
+                    $query->orWhere('location_id', $video->location_id);
+                }
+    
+                if ($video->famiglie && $video->famiglie->count()) {
+                    $query->orWhereHas('famiglie', function ($q) use ($video) {
+                        $q->whereIn('famiglie.id', $video->famiglie->pluck('id'));
+                    });
+                }
+    
+                if ($video->series && $video->series->count()) {
+                    $query->orWhereHas('series', function ($q) use ($video) {
+                        $q->whereIn('series.id', $video->series->pluck('id'));
+                    });
+                }
+            })
+            ->with(['tags', 'location'])
+            ->distinct()
+            ->limit(6)
+            ->get();
+    
+        return view('sections.video', compact('video', 'similarVideos'));
     }
 
     private function applyFilters($query, $filters)
@@ -68,11 +90,16 @@ class SectionController extends Controller
         }
 
         if (!empty($filters['format'])) {
-            $query->where('formato', $filters['format']);
+            // Supporta relazione con Formato
+            $query->whereHas('formato', function ($q) use ($filters) {
+                $q->where('nome', $filters['format']);
+            });
         }
 
         if (!empty($filters['family'])) {
-            $query->where('famiglia', $filters['family']);
+            $query->whereHas('famiglie', function ($q) use ($filters) {
+                $q->where('famiglie.nome', $filters['family']); 
+            });
         }
 
         if (!empty($filters['location'])) {
@@ -92,59 +119,46 @@ class SectionController extends Controller
     
     public function archivio(Request $request)
     {
-        // Recupera i valori dei filtri dal request
         $filters = $request->only([
             'title', 'min_year', 'max_year', 'author',
             'min_duration', 'max_duration', 'format', 
             'family', 'location', 'tags', 'view'
         ]);
-        
         $view = $filters['view'] ?? 'grid';
 
-        // Query base: solo video "visibili" (senza i tag esclusi)
         $baseQuery = Video::whereDoesntHave('tags', function ($q) {
             $q->whereIn('nome', ['Fuori dal frame', 'Fuori dal Tacco']);
         });
 
-        // Applica i filtri dell'utente
         $this->applyFilters($baseQuery, $filters);
 
-        // Recupera i video paginati
-        $videos = $baseQuery->with(['location', 'autore', 'tags'])->paginate(18);
+        $videos = $baseQuery->with(['location', 'autore', 'tags', 'formato'])->paginate(18);
 
-        // Estrai gli ID di YouTube per ogni video
-        foreach ($videos as $video) {
-            $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
-        }
-
-        // Controlla se la richiesta è AJAX
         if ($request->ajax()) {
             $html = ($view === 'map')
                 ? view('partials.map', ['locations' => $videos->pluck('location')->unique()])->render()
                 : view('partials.grid', compact('videos'))->render();
-        
             return response()->json(['html' => $html]);
         }
 
-        // Ricava gli ID dei video filtrati per i filtri
         $filteredVideoIds = (clone $baseQuery)->pluck('id');
-
-        // Recupera i dati per i filtri SOLO sui video visibili
         $filtersData = [
             'minYear'      => (clone $baseQuery)->min('anno'),
             'maxYear'      => (clone $baseQuery)->max('anno'),
             'minDuration'  => (clone $baseQuery)->min('durata_secondi'),
             'maxDuration'  => (clone $baseQuery)->max('durata_secondi'),
             'authors'      => Autore::whereIn('id', (clone $baseQuery)->distinct()->pluck('autore_id'))->pluck('nome'),
-            'formats'      => (clone $baseQuery)->distinct()->pluck('formato'),
-            'families'     => (clone $baseQuery)->distinct()->pluck('famiglia'),
+            'formats'      => Formato::whereIn('id', (clone $baseQuery)->distinct()->pluck('formato_id'))->pluck('nome'),
+            'families' => Famiglia::whereIn(
+                    'id',
+                    \DB::table('video_famiglia')->whereIn('video_id', $filteredVideoIds)->pluck('famiglia_id')
+                )->pluck('nome'),
             'locations'    => Location::whereIn('id', (clone $baseQuery)->distinct()->pluck('location_id'))->pluck('name'),
             'tags'         => Tag::whereNotIn('nome', ['Fuori dal frame', 'Fuori dal Tacco'])
                                 ->whereIn('id', \DB::table('tag_video')->whereIn('video_id', $filteredVideoIds)->pluck('tag_id'))
                                 ->pluck('nome'),
         ];
 
-        // Restituisce la vista
         return view('sections.archivio', array_merge(
             compact('videos'), $filtersData
         ));
@@ -153,32 +167,17 @@ class SectionController extends Controller
     public function serie(Request $request)
     {
         try {
-            // Recupera le serie con i relativi video
-            $series = Serie::with('videos')->paginate(10);
-    
-            // Itera sulle serie e sui video per elaborare i dati
-            $series->each(function ($serie) {
-                $serie->videos->each(function ($video) {
-                    // Aggiorna l'ID di YouTube basandoti sul nuovo campo link_youtube
-                    $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
-                    
-                    // Logga gli URL dei video e gli ID estratti per debug
-                    \Log::info('Video URL: ' . $video->link_youtube . ' - YouTube ID: ' . $video->youtube_id);
-                });
-            });
-    
-            // Ritorna una risposta JSON se la richiesta è AJAX
+            $series = Serie::with(['videos.formato', 'videos.autore'])->paginate(10);
+
             if ($request->ajax()) {
                 return response()->json([
                     'html' => view('partials.series_list', compact('series'))->render()
                 ]);
             }
-    
-            // Ritorna la vista delle serie
+
             return view('sections.serie', compact('series'));
-    
+
         } catch (\Exception $e) {
-            // Logga l'errore e ritorna una risposta di errore
             \Log::error('Errore in serie(): ' . $e->getMessage());
             return response()->json(['error' => 'Errore interno del server'], 500);
         }
@@ -187,39 +186,29 @@ class SectionController extends Controller
     public function fuoriDalTacco(Request $request)
     {
         try {
-            // Recupera i valori dei filtri dal request
             $filters = $request->only([
                 'title', 'min_year', 'max_year', 'author',
                 'min_duration', 'max_duration', 'format', 
                 'family', 'location', 'tags', 'view'
             ]);
-            
             $view = $filters['view'] ?? 'grid';
 
-            // Solo video con "Fuori dal Tacco"
             $query = Video::whereHas('tags', function ($q) {
                 $q->where('nome', 'Fuori dal Tacco');
             });
-            $this->applyFilters($query, $filters); // <-- commentata
+            $this->applyFilters($query, $filters);
 
-            // Recupera i video paginati
-            $videos = $query->with(['location', 'autore', 'tags'])->paginate(18);
+            $videos = $query->with(['location', 'autore', 'tags', 'formato'])->paginate(18);
 
-            // Estrai gli ID di YouTube per ogni video
-            foreach ($videos as $video) {
-                $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
-            }
-
-            // Controlla se la richiesta è AJAX
             if ($request->ajax()) {
                 $html = ($view === 'map')
                     ? view('partials.map', ['locations' => $videos->pluck('location')->unique()])->render()
                     : view('partials.grid', compact('videos'))->render();
-            
                 return response()->json(['html' => $html]);
             }
 
-            // Recupera i dati per i filtri (facoltativo: puoi filtrare solo i tag presenti tra questi video)
+            $filteredVideoIds = (clone $query)->pluck('id');
+
             $filtersData = [
                 'minYear' => Video::whereHas('tags', function ($q) {
                     $q->where('nome', 'Fuori dal Tacco');
@@ -236,12 +225,13 @@ class SectionController extends Controller
                 'authors' => Autore::whereHas('videos.tags', function ($q) {
                     $q->where('nome', 'Fuori dal Tacco');
                 })->pluck('nome'),
-                'formats' => Video::whereHas('tags', function ($q) {
+                'formats' => Formato::whereIn('id', Video::whereHas('tags', function ($q) {
                     $q->where('nome', 'Fuori dal Tacco');
-                })->distinct()->pluck('formato'),
-                'families' => Video::whereHas('tags', function ($q) {
-                    $q->where('nome', 'Fuori dal Tacco');
-                })->distinct()->pluck('famiglia'),
+                })->distinct()->pluck('formato_id'))->pluck('nome'),
+                'families' => Famiglia::whereIn(
+                        'id',
+                        \DB::table('video_famiglia')->whereIn('video_id', $filteredVideoIds)->pluck('famiglia_id')
+                    )->pluck('nome'),
                 'locations' => Location::whereHas('videos.tags', function ($q) {
                     $q->where('nome', 'Fuori dal Tacco');
                 })->pluck('name'),
@@ -252,7 +242,6 @@ class SectionController extends Controller
                 ->pluck('nome')
             ];
 
-            // Restituisce la vista
             return view('sections.fuori-dal-tacco', array_merge(
                 compact('videos'), $filtersData
             ));
@@ -270,34 +259,27 @@ class SectionController extends Controller
     
     public function autori()
     {
-        // Recupera tutti i video con l'autore
-        $videos = Video::with('autore')->get();
+        // Recupera tutti i formati
+        $formati = Formato::with(['autori.videos'])->get();
     
-        // Raggruppa per formato
-        $formati = $videos->groupBy('formato')->map(function ($videosDelFormato) {
-            // Ottieni autori unici per questo formato
-            $autori = $videosDelFormato->pluck('autore')->unique('id')->values();
+        $formatiAutori = $formati->mapWithKeys(function ($formato) {
+            $autori = $formato->autori->filter(function ($autore) use ($formato) {
+                // Cerca almeno un video di quell'autore con quel formato
+                return $autore->videos()->where('formato_id', $formato->id)->exists();
+            })->unique('id')->values();
     
-            return $autori;
+            return [$formato->nome => $autori];
         });
     
-        return view('sections.autori', compact('formati'));
+        return view('sections.autori', ['formati' => $formatiAutori]);
     }
 
     public function showAutore($id)
     {
         try {
-            $autore = Autore::findOrFail($id);
-    
-            // Paginazione dei video (12 per pagina)
-            $videos = $autore->videos()->paginate(12);
-    
-            // Applichiamo l'id di YouTube ai video
-            $videos->getCollection()->transform(function ($video) {
-                $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
-                return $video;
-            });
-    
+            $autore = Autore::with(['formati'])->findOrFail($id);
+            $videos = $autore->videos()->with(['formato', 'tags', 'location'])->paginate(12);
+
             return view('sections.autore-show', compact('autore', 'videos'));
         } catch (\Exception $e) {
             \Log::error('Errore in showAutore(): ' . $e->getMessage());
@@ -314,35 +296,30 @@ class SectionController extends Controller
                 'family', 'location', 'tags', 'view'
             ]);
 
-            // Solo video con "Fuori dal frame"
             $query = Video::whereHas('tags', function ($q) {
                 $q->where('nome', 'Fuori dal frame');
             });
 
-            // Applica filtri generali
             $this->applyFilters($query, $filters);
 
-            // Paginazione
-            $videos = $query->with(['location', 'autore', 'tags'])->paginate(18);
+            $videos = $query->with(['location', 'autore', 'tags', 'formato'])->paginate(18);
 
-            // Estrai ID YouTube
-            foreach ($videos as $video) {
-                $video->youtube_id = $this->getYoutubeVideoId($video->link_youtube);
-            }
-
-            // Vista AJAX
             if ($request->ajax()) {
                 $html = view('partials.grid', compact('videos'))->render();
                 return response()->json(['html' => $html]);
             }
 
-            // Dati filtri
+            $filteredVideoIds = (clone $query)->pluck('id');
+
             $filtersData = [
                 'minDuration' => Video::whereHas('tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->min('durata_secondi'),
                 'maxDuration' => Video::whereHas('tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->max('durata_secondi'),
                 'authors' => Autore::whereHas('videos.tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->pluck('nome'),
-                'formats' => Video::whereHas('tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->distinct()->pluck('formato'),
-                'families' => Video::whereHas('tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->distinct()->pluck('famiglia'),
+                'formats' => Formato::whereIn('id', Video::whereHas('tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->distinct()->pluck('formato_id'))->pluck('nome'),
+                'families' => Famiglia::whereIn(
+                        'id',
+                        \DB::table('video_famiglia')->whereIn('video_id', $filteredVideoIds)->pluck('famiglia_id')
+                    )->pluck('nome'),
                 'locations' => Location::whereHas('videos.tags', fn($q) => $q->where('nome', 'Fuori dal frame'))->pluck('name'),
                 'tags' => Tag::whereHas('videos.tags', fn($q) => $q->where('nome', 'Fuori dal frame'))
                             ->whereNotIn('nome', ['Fuori dal frame', 'Fuori dal Tacco'])
@@ -360,18 +337,18 @@ class SectionController extends Controller
     public function eventi(Request $request)
     {
         $query = $request->input('query');
-        $events = Evento::query(); // Utilizzo del modello aggiornato "Evento"
-    
+        $events = Evento::query();
+
         if ($query) {
-            $events = $events->where('titolo', 'like', '%' . $query . '%') // Ricerca nel campo "titolo"
-                             ->orWhere('descrizione', 'like', '%' . $query . '%') // Ricerca nel campo "descrizione"
-                             ->orWhere('start_date', 'like', '%' . $query . '%') // Ricerca nel campo "start_date"
-                             ->orWhere('end_date', 'like', '%' . $query . '%') // Ricerca nel campo "end_date"
-                             ->orWhere('luogo', 'like', '%' . $query . '%'); // Ricerca nel campo "luogo"
+            $events = $events->where('titolo', 'like', '%' . $query . '%')
+                             ->orWhere('descrizione', 'like', '%' . $query . '%')
+                             ->orWhere('start_date', 'like', '%' . $query . '%')
+                             ->orWhere('end_date', 'like', '%' . $query . '%')
+                             ->orWhere('luogo', 'like', '%' . $query . '%');
         }
-    
+
         $events = $events->paginate(10);
-    
+
         return view('sections.eventi', compact('events'));
     }
 
@@ -385,8 +362,6 @@ class SectionController extends Controller
         $riconoscimenti = Riconoscimento::orderBy('data_pubblicazione', 'desc')
                                       ->orderBy('created_at', 'desc')
                                       ->get();
-        
         return view('sections.dicono-di-noi', compact('riconoscimenti'));
     }
-
 }

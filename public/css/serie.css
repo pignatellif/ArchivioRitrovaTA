@@ -16,62 +16,89 @@ body {
     background-color: #fdf0d5;
 }
 
-/* HERO */
+/* sezione iniziale */
 .hero-section {
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+    position: relative;
     width: 100vw;
-    height: 35vh;
+    height: 50vh;
+    background-image: url("/img/serie.png");
+    background-size: cover;
+    background-position: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1rem;
-    background-color: #fdf0d5;
-    color: #003049;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7); /* overlay scuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
     text-align: center;
 }
 
-.hero-section h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: #003049;
+.hero-text {
+    color: white;
+    max-width: 900px;
+    padding: 1rem;
 }
 
-.hero-section p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    color: #003049;
+.hero-text h2 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
 }
 
+.hero-text h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
     .hero-section {
-        height: auto;
-        padding: 2rem 1rem;
-        text-align: center;
+        height: 45vh;
     }
 
-    .hero-section h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
+    .hero-text h2 {
+        font-size: 2rem;
     }
 
-    .hero-section p {
+    .hero-text h3 {
+        font-size: 1.4rem;
+    }
+
+    .hero-text p {
         font-size: 1rem;
-        line-height: 1.6;
     }
 }
 
 @media (max-width: 480px) {
     .hero-section {
-        padding: 1.5rem 1rem;
+        height: 38vh;
     }
 
-    .hero-section h2 {
-        font-size: 1.4rem;
-        margin-bottom: 0.8rem;
+    .hero-text h2 {
+        font-size: 1.6rem;
     }
 
-    .hero-section p {
-        font-size: 0.9rem;
-        line-height: 1.5;
+    .hero-text h3 {
+        font-size: 1.2rem;
+    }
+
+    .hero-text p {
+        font-size: 0.95rem;
     }
 }
 

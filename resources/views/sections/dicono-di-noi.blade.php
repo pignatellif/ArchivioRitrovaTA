@@ -2,9 +2,13 @@
 
 @section('content')
 <section class="hero-section">
-    <div class="hero-container">
-        <h2>Cosa dicono di noi</h2>
-        <p>Scopri le testimonianze autentiche dei protagonisti dei nostri filmati. Racconti personali, ricordi indelebili ed emozioni che arricchiscono ciò che le immagini non possono esprimere.</p>
+    <div class="hero-overlay">
+        <div class="hero-text">
+            <h2>Archivio Ritrovata</h2>
+            <hr>
+            <h3>Le nostre storie</h3>
+            <p>Esplora i racconti e le testimonianze che ci rendono unici.</p>
+        </div>
     </div>
 </section>
 

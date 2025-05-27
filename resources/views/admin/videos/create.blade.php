@@ -41,41 +41,52 @@
             <input type="number" name="durata_secondi" class="form-control" value="{{ old('durata_secondi') }}" required>
         </div>
 
-        <!-- Formato -->
+        <!-- Formato (nome) -->
         <div class="mb-3">
             <label for="formato" class="form-label">Formato</label>
-            <input type="text" name="formato" class="form-control" value="{{ old('formato') }}">
+            <input type="text" name="formato" class="form-control" placeholder="Nome formato" value="{{ old('formato') }}">
         </div>
 
-        <!-- Famiglia -->
+        <!-- Location -->
         <div class="mb-3">
-            <label for="famiglia" class="form-label">Famiglia</label>
-            <input type="text" name="famiglia" class="form-control" value="{{ old('famiglia') }}">
+            <label for="location" class="form-label">Luogo</label>
+            <input type="text" name="location" id="location" class="form-control" placeholder="Nome luogo" value="{{ old('location') }}">
         </div>
 
-        <!-- Luogo -->
+        <!-- Famiglie (nomi separati da virgola) -->
         <div class="mb-3">
-            <label for="luogo" class="form-label">Luogo</label>
-            <input type="text" name="luogo" class="form-control" value="{{ old('luogo') }}" required>
+            <label for="famiglie" class="form-label">Famiglie</label>
+            <input type="text" name="famiglie" class="form-control" placeholder="Nomi famiglie separati da virgola"
+                value="{{ is_array(old('famiglie')) ? implode(',', old('famiglie')) : old('famiglie') }}">
+            <small class="form-text text-muted">Inserisci uno o più nomi famiglia separati da virgola.</small>
         </div>
 
         <!-- YouTube -->
         <div class="mb-3">
-            <label for="link_youtube" class="form-label">Link YouTube</label>
-            <input type="url" name="link_youtube" class="form-control" value="{{ old('link_youtube') }}" required>
+            <label for="youtube_id" class="form-label">Link o ID YouTube</label>
+            <input type="text" id="youtube_id" name="youtube_id" class="form-control" value="{{ old('youtube_id') }}">
         </div>
 
-        <!-- Autore -->
+        <!-- Anteprima YouTube -->
+        <div class="mb-3" id="youtube-preview" style="display: none;">
+            <label class="form-label">Anteprima Video</label>
+            <div class="ratio ratio-16x9">
+                <iframe id="youtube-iframe" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Autore (nome) -->
         <div class="mb-3">
-            <label for="autore_nome" class="form-label">Autore</label>
-            <input type="text" name="autore_nome" id="autore_nome" class="form-control" required>
+            <label for="autore" class="form-label">Autore</label>
+            <input type="text" name="autore" class="form-control" placeholder="Nome autore" value="{{ old('autore') }}">
         </div>
 
-        <!-- Tag -->
+        <!-- Tag (nomi separati da virgola) -->
         <div class="mb-3">
             <label for="tags" class="form-label">Tag</label>
-            <input type="text" name="tags" class="form-control" value="{{ old('tags') }}">
-            <small class="form-text text-muted">Inserisci i tag separati da virgole.</small>
+            <input type="text" name="tags" class="form-control" placeholder="Nomi tag separati da virgola"
+                value="{{ is_array(old('tags')) ? implode(',', old('tags')) : old('tags') }}">
+            <small class="form-text text-muted">Inserisci uno o più nomi tag separati da virgola.</small>
         </div>
 
         <!-- Pulsanti -->
@@ -83,4 +94,32 @@
         <a href="{{ route('videos.index') }}" class="btn btn-secondary">Annulla</a>
     </form>
 </div>
+
+<script>
+    function extractYoutubeId(url) {
+        const regex = /(?:youtube\.com\/(?:.*v=|.*\/(?:v|embed|shorts)\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    document.getElementById('youtube_id').addEventListener('input', function () {
+        const videoId = extractYoutubeId(this.value);
+        const preview = document.getElementById('youtube-preview');
+        const iframe = document.getElementById('youtube-iframe');
+
+        if (videoId) {
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+            preview.style.display = 'block';
+        } else {
+            iframe.src = '';
+            preview.style.display = 'none';
+        }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('youtube_id');
+        const event = new Event('input');
+        input.dispatchEvent(event);
+    });
+</script>
 @endsection

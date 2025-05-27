@@ -5,97 +5,122 @@
 @endpush
 
 @section('content')
-    <div class="video-page" id="video-show">
-        <!-- Sezione video -->
-        <div class="video-main-player">
-            <iframe 
-                id="youtube-iframe"
-                src="https://www.youtube.com/embed/{{ \Illuminate\Support\Str::afterLast($video->link_youtube, 'v=') }}"
-                frameborder="0" 
-                allow="autoplay; encrypted-media"
-                allowfullscreen>
-            </iframe>
+    <div class="cinema-container">
+        <!-- Video Player Section -->
+        <div class="video-player-section">
+            <div class="video-wrapper">
+                <iframe 
+                    id="youtube-iframe"
+                    src="https://www.youtube.com/embed/{{ $video->youtube_id }}"
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen>
+                </iframe>
+            </div>
         </div>
 
-        <!-- Sezione dettagli video -->
-        <div class="video-details-wrapper">
-            <!-- Colonna descrizione -->
-            <div class="video-description-container">
-                <h2 class="video-title">{{ $video->titolo }}</h2>
-                <p class="video-description">{{ $video->descrizione }}</p>
-                <p>
-                    <strong>Autore:</strong>
+        <!-- Video Info Section -->
+        <div class="video-info-section">
+            <div class="video-main-info">
+                <h1 class="video-title">{{ $video->titolo }}</h1>
+                
+                <div class="video-meta">
+                    <span class="meta-item">
+                        <i class="fa-regular fa-clock"></i>
+                        {{ gmdate('i:s', $video->durata_secondi) }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fa-regular fa-calendar"></i>
+                        {{ $video->anno }}
+                    </span>
                     @if($video->autore)
-                        {{ $video->autore->nome }}
-                    @else
-                        <em>Non disponibile</em>
+                        <span class="meta-item">
+                            <i class="fa-regular fa-user"></i>
+                            {{ $video->autore->nome }}
+                        </span>
                     @endif
-                </p>
-                <p><strong>Durata:</strong> {{ gmdate('i:s', $video->durata_secondi) }}</p>
+                </div>
+
+                @if($video->descrizione)
+                    <div class="video-description">
+                        <p>{{ $video->descrizione }}</p>
+                    </div>
+                @endif
             </div>
 
-            <!-- Colonna informazioni aggiuntive -->
-            <div class="video-extra-info">
-                <ul>
-                    <li><strong>Anno di produzione:</strong> {{ $video->anno }}</li>
-                    <li><strong>Formato:</strong>
-                        @if($video->formato)
-                            {{ $video->formato }}
-                        @else
-                            <em>Non disponibile</em>
-                        @endif
-                    </li>
-                    <li><strong>Famiglia:</strong> {{ $video->famiglia }}</li>
-                    <li><strong>Luogo:</strong>
-                        @if($video->location)
-                            {{ $video->location->name }}
-                        @else
-                            <em>Non disponibile</em>
-                        @endif
-                    </li>
-                    <li>
-                        <strong>Tag:</strong>
-                        @if($video->tags && $video->tags->count())
-                            @foreach($video->tags as $tag)
-                                <span class="video-tag">{{ $tag->name ?? $tag->nome }}</span>
+            <div class="video-details-grid">
+                @if($video->formato)
+                    <div class="detail-item">
+                        <span class="detail-label">Formato</span>
+                        <span class="detail-value">{{ $video->formato->nome ?? $video->formato }}</span>
+                    </div>
+                @endif
+
+                @if($video->location)
+                    <div class="detail-item">
+                        <span class="detail-label">Luogo</span>
+                        <span class="detail-value">{{ $video->location->name }}</span>
+                    </div>
+                @endif
+
+                @if($video->famiglie && $video->famiglie->count())
+                    <div class="detail-item">
+                        <span class="detail-label">Famiglie</span>
+                        <div class="tags-container">
+                            @foreach($video->famiglie as $famiglia)
+                                <span class="tag">{{ $famiglia->nome }}</span>
                             @endforeach
-                        @else
-                            <em>Non disponibili</em>
-                        @endif
-                    </li>
-                </ul>
+                        </div>
+                    </div>
+                @endif
+
+                @if($video->tags && $video->tags->count())
+                    <div class="detail-item">
+                        <span class="detail-label">Tag</span>
+                        <div class="tags-container">
+                            @foreach($video->tags as $tag)
+                                <span class="tag">{{ $tag->nome ?? $tag->name }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
+
+        <!-- Similar Videos Section -->
+        @if($similarVideos->count())
+        <div class="correlati-block">
+            <h2 class="section-title">Video correlati</h2>
+            <div class="carousel-wrapper">
+                <button class="arrow__btn left-arrow" onclick="scrollCarousel('correlati', -1)">
+                    <i class="fa-solid fa-caret-left"></i>
+                </button>
+                <div class="carousel" id="carousel-correlati">
+                    @foreach($similarVideos as $similarVideo)
+                    <div class="item">
+                        <a href="{{ route('video.show', $similarVideo->id) }}">
+                            <img src="https://img.youtube.com/vi/{{ $similarVideo->youtube_id }}/hqdefault.jpg"
+                                alt="Anteprima del video {{ $similarVideo->titolo }}">
+                            <span class="item-info">
+                                <strong>{{ $similarVideo->titolo }}</strong><br>
+                                <small>
+                                    {{ $similarVideo->anno }} -
+                                    {{ floor($similarVideo->durata_secondi / 60) }}:{{ str_pad($similarVideo->durata_secondi % 60, 2, '0', STR_PAD_LEFT) }}
+                                </small>
+                            </span>
+                        </a>
+                    </div>
+                    @endforeach
+                </div>
+                <button class="arrow__btn right-arrow" onclick="scrollCarousel('correlati', 1)">
+                    <i class="fa-solid fa-caret-right"></i>
+                </button>
+            </div>
+        </div>
+        @endif
     </div>
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var iframe = document.getElementById('youtube-iframe');
-    // Recupera l'URL originale
-    var originalSrc = iframe.getAttribute('src');
-    // Aggiungi parametri JS API, autoplay e mute
-    var separator = originalSrc.includes('?') ? '&' : '?';
-    var newSrc = originalSrc + separator + 'enablejsapi=1&autoplay=1&mute=1';
-    iframe.setAttribute('src', newSrc);
-
-    // Carica l'API di YouTube solo dopo che l'iframe è stato aggiornato
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    window.onYouTubeIframeAPIReady = function() {
-        var player = new YT.Player('youtube-iframe', {
-            events: {
-                'onReady': function(event) {
-                    event.target.mute();
-                    event.target.playVideo();
-                }
-            }
-        });
-    }
-});
-</script>
+    <script src="{{ asset('js/video.js') }}"></script>
 @endpush

@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('videos', function (Blueprint $table) {
@@ -16,10 +13,8 @@ return new class extends Migration
             $table->string('titolo');
             $table->integer('anno')->nullable();
             $table->integer('durata_secondi');
-            $table->string('formato')->nullable();
             $table->text('descrizione')->nullable();
-            $table->string('famiglia')->nullable();
-            $table->string('link_youtube')->nullable();
+            $table->string('youtube_id')->nullable();
 
             // Foreign key per autore
             $table->foreignId('autore_id')
@@ -32,13 +27,16 @@ return new class extends Migration
                 ->constrained('locations')
                 ->onDelete('cascade');
 
+            // Foreign key per formato
+            $table->foreignId('formato_id')
+                ->nullable()
+                ->constrained('formati')
+                ->onDelete('set null');
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('videos');

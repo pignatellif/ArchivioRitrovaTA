@@ -23,7 +23,7 @@ body {
     position: relative;
     width: 100vw;
     height: 50vh;
-    background-image: url("/img/archivio.png");
+    background-image: url("/img/personaggi.png");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -99,6 +99,107 @@ body {
 
     .hero-text p {
         font-size: 0.95rem;
+    }
+}
+
+/* video */
+.video-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    justify-content: center;
+    align-items: start;
+    background-color: #fdf0d5;
+    padding: 1rem 3rem;
+}
+
+.video-card {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.video-card:hover .video-thumbnail {
+    transform: scale(1.05);
+}
+
+.card {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.video-thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 0.5s ease-in-out;
+}
+
+.card-body {
+    padding: 10px;
+    text-align: left;
+    color: white;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #003049;
+    text-transform: uppercase;
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: rgba(0, 48, 73, 0.8);
+    line-height: 1.4;
+}
+
+/* tags */
+.custom-tag {
+    background-color: #c1121f;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    border-radius: 5px;
+    font-weight: 500;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.custom-tag:hover {
+    background-color: #780000;
+    cursor: pointer;
+}
+
+.tags {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.no-videos {
+    text-align: center;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 20px;
+}
+
+@media (max-width: 1200px) {
+    .video-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -496,6 +597,7 @@ body {
 
 .card-title {
     font-size: 1.5rem;
+    font-weight: bold;
     color: #003049;
     text-transform: uppercase;
 }
@@ -595,43 +697,82 @@ body {
     pointer-events: none;
 }
 
-/* ========== Stile della mappa ========== */
-.map-container {
+/* ========== Autori ========== */
+.format-container {
+    margin: 3rem auto;
+    padding: 0 2rem;
+}
+
+.format-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem;
+    color: #003049;
+    border-left: 5px solid #c1121f;
+    padding-left: 0.5rem;
+}
+
+/* Layout degli autori */
+.author-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Card autore */
+.author-card {
+    background-color: #fdf0d5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    text-align: center;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fdf0d5;
-    padding: 2rem;
-    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
 }
 
-#map {
-    width: 100%;
-    height: 75vh; /* Mappa più alta */
-    border: 2px solid #14213d;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden;
+.author-card:hover {
+    transform: translateY(-5px);
 }
 
-#map:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+.author-card img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 1rem;
 }
 
-#videoContainer,
-#map {
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+/* Testo */
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
-#videoContainer.hidden,
-#map.hidden {
-    opacity: 0;
-    visibility: hidden;
+.text-muted {
+    color: #777;
+    font-size: 0.9rem;
 }
 
-.location-title {
-    background-color: #fdf0d5;
-    font-size: 1.5rem;
-    color: #2c3e50;
+/* Pulsante */
+.btn {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-outline-primary {
+    border: 1px solid #c1121f;
+    color: #c1121f;
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: #780000;
+    color: #fff;
+    border: 1px solid #780000;
 }

@@ -5,12 +5,14 @@
 @endpush
 
 @section('content')
-
-<!-- HERO SECTION -->
 <section class="hero-section">
-    <div class="hero-container">
-        <h2>Le nostre serie</h2>
-        <p>Esplora le serie che raccontano la memoria privata della Puglia, trasformandola in un patrimonio collettivo.</p>
+    <div class="hero-overlay">
+        <div class="hero-text">
+            <h2>serie</h2>
+            <hr>
+            <h3>Ogni pellicola è un ricordo che torna a parlare.</h3>
+            <p>Scopri i filmati che compongono la nostra memoria condivisa.</p>
+        </div>
     </div>
 </section>
 
