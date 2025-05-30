@@ -92,27 +92,36 @@
         <div class="correlati-block">
             <h2 class="section-title">Video correlati</h2>
             <div class="carousel-wrapper">
-                <button class="arrow__btn left-arrow" onclick="scrollCarousel('correlati', -1)">
+                <button class="arrow__btn left-arrow btn-prev" onclick="scrollCarousel('correlati', -1)">
                     <i class="fa-solid fa-caret-left"></i>
                 </button>
-                <div class="carousel" id="carousel-correlati">
+                    <div class="carousel" id="carousel-correlati">
                     @foreach($similarVideos as $similarVideo)
-                    <div class="item">
-                        <a href="{{ route('video.show', $similarVideo->id) }}">
-                            <img src="https://img.youtube.com/vi/{{ $similarVideo->youtube_id }}/hqdefault.jpg"
-                                alt="Anteprima del video {{ $similarVideo->titolo }}">
-                            <span class="item-info">
-                                <strong>{{ $similarVideo->titolo }}</strong><br>
-                                <small>
-                                    {{ $similarVideo->anno }} -
-                                    {{ floor($similarVideo->durata_secondi / 60) }}:{{ str_pad($similarVideo->durata_secondi % 60, 2, '0', STR_PAD_LEFT) }}
-                                </small>
-                            </span>
-                        </a>
-                    </div>
+                        <div class="video-card item">
+                            <a href="{{ route('video.show', $similarVideo->id) }}" class="video-link">
+                                <img src="https://img.youtube.com/vi/{{ $similarVideo->youtube_id }}/hqdefault.jpg"
+                                    alt="Anteprima del video {{ $similarVideo->titolo }}"
+                                    class="video-thumbnail"
+                                    onerror="this.onerror=null; this.src='/path/to/fallback-image.jpg';">
+                                <div class="overlay">
+                                    <div class="play-icon"><i class="fa-solid fa-play"></i></div>
+                                </div>
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $similarVideo->titolo }}</h5>
+                                <div class="card-meta">
+                                    <div class="meta-row">
+                                        <span>{{ $similarVideo->autore->nome ?? 'Autore sconosciuto' }}, {{ $similarVideo->anno }}, {{ $similarVideo->location->name ?? 'Luogo sconosciuto' }}</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span>{{ gmdate('i:s', $similarVideo->durata_secondi) }} min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                 </div>
-                <button class="arrow__btn right-arrow" onclick="scrollCarousel('correlati', 1)">
+                <button class="arrow__btn right-arrow btn-next" onclick="scrollCarousel('correlati', 1)">
                     <i class="fa-solid fa-caret-right"></i>
                 </button>
             </div>

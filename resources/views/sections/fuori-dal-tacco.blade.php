@@ -17,8 +17,6 @@
     </div>
 </section>
 
-<div class="section-divider"></div>
-
 <section class="control-section">
     <div class="control-container">
         <div class="view-switch">

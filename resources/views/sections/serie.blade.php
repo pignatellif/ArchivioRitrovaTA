@@ -16,15 +16,11 @@
     </div>
 </section>
 
-<div class="section-divider"></div>
-
 <section class="series-section">
     <div class="series-container">
         @include('partials.series_list', ['series' => $series])
     </div>
 </section>
-
-<div class="section-divider"></div>
 
 <section class="spacer-section">
     <div class="container">

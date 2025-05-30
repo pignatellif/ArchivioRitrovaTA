@@ -150,3 +150,94 @@ body {
         height: 50vh;
     }
 }
+
+/* ===== Format Section ===== */
+.format-authors-section {
+    padding: 2rem 1rem;
+    background-color: #fdf0d5;
+}
+
+.format-container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.format-name {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #003049;
+    border-bottom: 2px solid #003049;
+    padding-bottom: 0.3rem;
+}
+
+/* ===== Author Cards ===== */
+.author-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.author-card {
+    background-color: #fdf0d5;
+    border: 1px solid #c1121f;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+}
+
+.author-card:hover {
+    transform: translateY(-5px);
+}
+
+.author-card .card-body {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.author-card img {
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.author-card .card-title {
+    font-size: 1.2rem;
+    color: #003049;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.author-card p.text-muted {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin-bottom: 0.8rem;
+}
+
+/* ===== Button Styles ===== */
+.author-card .btn {
+    border-color: #c1121f;
+    color: #c1121f;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.author-card .btn:hover {
+    background-color: #780000;
+    color: #fff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .author-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .author-row {
+        grid-template-columns: 1fr;
+    }
+}

@@ -91,12 +91,12 @@ class SeriesController extends Controller
     public function edit(Request $request, Serie $serie)
     {
         $serie->load('videos');
-
         $selectedVideos = $serie->videos->pluck('id')->toArray();
-
+    
+        // Query per filtrare i video mostrati
         $availableQuery = Video::whereNotIn('id', $selectedVideos);
-
-        // Applica filtri se presenti
+    
+        // Filtri
         if ($request->filled('titolo')) {
             $availableQuery->where('titolo', 'LIKE', '%' . $request->titolo . '%');
         }
@@ -128,31 +128,33 @@ class SeriesController extends Controller
                 $q->where('nome', $request->tag);
             });
         }
-
-        // Ottieni i video filtrati con relazioni utili
-        $availableVideos = $availableQuery->with(['autore', 'formato', 'famiglie', 'location', 'tags'])->orderBy('titolo')->get();
-
-        // Dati per i filtri (solo dai video non ancora associati)
-        $allAvailableVideos = Video::whereNotIn('id', $selectedVideos);
-
-        $anni = $allAvailableVideos->select('anno')
-                    ->distinct()
-                    ->whereNotNull('anno')
-                    ->orderBy('anno', 'desc')
-                    ->pluck('anno');
-
-        $formati = Formato::pluck('nome')->sort();
-
-        $famiglie = Famiglia::pluck('nome')->sort();
-
-        $autori = Autore::pluck('nome')->sort();
-
-        $luoghi = Location::pluck('name')->sort();
-
-        // Per i tag, solo quelli collegati a video disponibili
-        $tagIds = $allAvailableVideos->clone()->get()->pluck('tags')->flatten()->pluck('id')->unique();
+    
+        // Video filtrati (da mostrare all'utente)
+        $availableVideos = $availableQuery
+            ->with(['autore', 'formato', 'famiglie', 'location', 'tags'])
+            ->orderBy('titolo')
+            ->get();
+    
+        // Query base per dati filtri (NON filtrata, serve tutto l’insieme possibile)
+        $filterBaseQuery = Video::whereNotIn('id', $selectedVideos);
+    
+        // Filtri disponibili
+        $allWithTags = (clone $filterBaseQuery)->with('tags')->get();
+        $tagIds = $allWithTags->pluck('tags')->flatten()->pluck('id')->unique();
         $tags = Tag::whereIn('id', $tagIds)->orderBy('nome')->pluck('nome');
-
+    
+        $anni = (clone $filterBaseQuery)
+            ->select('anno')
+            ->whereNotNull('anno')
+            ->distinct()
+            ->orderBy('anno', 'desc')
+            ->pluck('anno');
+    
+        $formati = Formato::pluck('nome')->sort();
+        $famiglie = Famiglia::pluck('nome')->sort();
+        $autori = Autore::pluck('nome')->sort();
+        $luoghi = Location::pluck('name')->sort();
+    
         return view('admin.series.edit', compact(
             'serie',
             'availableVideos',
@@ -163,7 +165,7 @@ class SeriesController extends Controller
             'luoghi',
             'tags'
         ));
-    }
+    }    
 
     public function update(Request $request, Serie $serie)
     {

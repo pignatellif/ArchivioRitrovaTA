@@ -35,40 +35,67 @@ class SectionController extends Controller
         return view('search.results', compact('query', 'risultati'));
     }
 
-    public function video($id)
+    public function getSimilarVideos(Video $video, int $limit = 6)
     {
-        $video = Video::with(['tags', 'location', 'famiglie', 'series'])->findOrFail($id);
-    
-        $similarVideos = Video::where('id', '!=', $video->id)
-            ->where(function ($query) use ($video) {
-                $query->whereHas('tags', function ($q) use ($video) {
-                    $q->whereIn('tags.id', $video->tags->pluck('id'));
-                });
-    
-                if ($video->location_id) {
-                    $query->orWhere('location_id', $video->location_id);
-                }
-    
-                if ($video->famiglie && $video->famiglie->count()) {
-                    $query->orWhereHas('famiglie', function ($q) use ($video) {
-                        $q->whereIn('famiglie.id', $video->famiglie->pluck('id'));
-                    });
-                }
-    
-                if ($video->series && $video->series->count()) {
-                    $query->orWhereHas('series', function ($q) use ($video) {
-                        $q->whereIn('series.id', $video->series->pluck('id'));
-                    });
-                }
-            })
-            ->with(['tags', 'location'])
-            ->distinct()
-            ->limit(6)
+        $allVideos = Video::with(['tags', 'location', 'famiglie', 'series', 'autore'])
+            ->where('id', '!=', $video->id)
             ->get();
     
-        return view('sections.video', compact('video', 'similarVideos'));
-    }
+        $scoredVideos = $allVideos->map(function ($other) use ($video) {
+            $score = 0;
+    
+            // Tag matching (peso 3)
+            $tagMatches = $video->tags->pluck('id')->intersect($other->tags->pluck('id'))->count();
+            $score += $tagMatches * 3;
+    
+            // Famiglie matching (peso 2)
+            $famigliaMatches = $video->famiglie->pluck('id')->intersect($other->famiglie->pluck('id'))->count();
+            $score += $famigliaMatches * 2;
+    
+            // Serie matching (peso 1.5)
+            $serieMatches = $video->series->pluck('id')->intersect($other->series->pluck('id'))->count();
+            $score += $serieMatches * 1.5;
+    
+            // Location matching (peso 1)
+            if ($video->location_id === $other->location_id) {
+                $score += 1;
+            }
+    
+            // Autore matching (peso 2.5)
+            if ($video->autore_id && $video->autore_id === $other->autore_id) {
+                $score += 2.5;
+            }
+    
+            // Anno di produzione (peso 1, se entro 2 anni di distanza)
+            if ($video->anno && $other->anno && abs($video->anno - $other->anno) <= 2) {
+                $score += 1;
+            }
 
+            $other->raw_similarity_score = $score;
+            return $other;
+        })->filter(fn($v) => $v->raw_similarity_score > 0);
+    
+        // Normalizzazione dei punteggi
+        $maxScore = $scoredVideos->max('raw_similarity_score') ?: 1;
+        $normalizedVideos = $scoredVideos->map(function ($video) use ($maxScore) {
+            $video->similarity_score = round($video->raw_similarity_score / $maxScore, 3);
+            return $video;
+        });
+    
+        return $normalizedVideos->sortByDesc('similarity_score')->take($limit);
+    }    
+
+    public function video($id)
+    {
+        $video = Video::with(['tags', 'location', 'famiglie', 'series', 'autore'])->findOrFail($id);
+        $similarVideos = $this->getSimilarVideos($video);
+    
+        return view('sections.video', [
+            'video' => $video,
+            'similarVideos' => $similarVideos
+        ]);
+    }
+    
     private function applyFilters($query, $filters)
     {
         if (!empty($filters['title'])) {
@@ -347,7 +374,7 @@ class SectionController extends Controller
                              ->orWhere('luogo', 'like', '%' . $query . '%');
         }
 
-        $events = $events->paginate(10);
+        $events = $events->paginate(12);
 
         return view('sections.eventi', compact('events'));
     }

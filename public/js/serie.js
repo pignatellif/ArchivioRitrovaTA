@@ -6,8 +6,3 @@ function scrollCarousel(index, direction) {
         behavior: "smooth",
     });
 }
-
-// Disabilita lo scroll orizzontale nativo
-document.querySelectorAll('[id^="carousel-"]').forEach((carousel) => {
-    carousel.style.overflowX = "hidden";
-});

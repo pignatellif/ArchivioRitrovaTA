@@ -29,9 +29,7 @@
 
                                 <h5 class="card-title text-center">{{ $autore->nome }}</h5>
 
-                                @if ($autore->anno_nascita)
-                                    <p class="text-center text-muted">Nato nel {{ $autore->anno_nascita }}</p>
-                                @endif
+                                <p class="text-center text-muted">{{ $autore->videos->count() }} video nell’archivio.</p>
 
                                 <div class="text-center mt-2">
                                     <a href="{{ route('autore.show', $autore->id) }}" class="btn btn-outline-primary btn-sm">
@@ -42,7 +40,6 @@
                         </div>
                     @endforeach
                 </div>
-                <div class="section-divider"></div>
             @endif
         @empty
             <p class="text-center">Nessun autore trovato.</p>

@@ -17,10 +17,8 @@
                     <p><strong>Anno di nascita:</strong> {{ $autore->anno_nascita }}</p>
                 @endif
 
-                @if ($autore->bio)
-                    <p>{{ $autore->bio }}</p>
-                @else
-                    <p>Autore di {{ $autore->videos->count() }} video nell’archivio.</p>
+                @if ($autore->biografia)
+                    <p>{{ $autore->biografia }}</p>
                 @endif
             </div>
         </div>

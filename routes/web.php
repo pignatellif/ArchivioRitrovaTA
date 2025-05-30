@@ -10,6 +10,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\RiconoscimentoController;
+use App\Http\Controllers\LocationController;
 
 use Illuminate\Http\Request;
 
@@ -111,7 +112,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{riconoscimento}/edit', [RiconoscimentoController::class, 'edit'])->name('edit');
         Route::put('/{riconoscimento}', [RiconoscimentoController::class, 'update'])->name('update');
         Route::delete('/{riconoscimento}', [RiconoscimentoController::class, 'destroy'])->name('destroy');
-        Route::get('/{riconoscimento}', [RiconoscimentoController::class, 'show'])->name('show');
+    });
+
+    // ==========================
+    // LOCATIONS
+    // ==========================
+    Route::prefix('admin/locations')->name('locations.')->group(function () {
+        Route::get('/', [LocationController::class, 'index'])->name('index');
+        Route::get('/{location}/edit', [LocationController::class, 'edit'])->name('edit');
+        Route::put('/{location}', [LocationController::class, 'update'])->name('update');
+        Route::delete('/{location}', [LocationController::class, 'destroy'])->name('destroy');
     });
     
 });

@@ -55,6 +55,15 @@
             </div>
         </div>
 
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-geo-alt fs-1 text-danger mb-2"></i>
+                    <h5 class="card-title">Luoghi</h5>
+                    <a href="{{ route('locations.index') }}" class="btn btn-danger w-100">Gestisci Luoghi</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

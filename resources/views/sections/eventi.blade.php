@@ -5,6 +5,17 @@
 @endpush
 
 @section('content')
+<section class="hero-section">
+    <div class="hero-overlay">
+        <div class="hero-text">
+            <h2>Progetti</h2>
+            <hr>
+            <h3>Ogni pellicola è un ricordo che torna a parlare.</h3>
+            <p>Scopri i filmati che compongono la nostra memoria condivisa.</p>
+        </div>
+    </div>
+</section>
+
 <section class="search-section">
     <div class="search-bar">
         <h2 class="search-title">Cerca Eventi</h2>
@@ -51,8 +62,17 @@
                 </div>
             </div>
         @empty
-            <div class="col-12">
-                <p class="text-center">Nessun evento trovato.</p>
+            <!-- Stato Vuoto -->
+            <div class="empty-state">
+                <div class="empty-content">
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                    <h3>Nessun evento ancora disponibile</h3>
+                    <p>
+                        Torna presto per scoprire cosa stiamo organizzando.
+                    </p>
+                </div>
             </div>
         @endforelse
     </div>
