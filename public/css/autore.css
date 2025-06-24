@@ -16,6 +16,41 @@ body {
     background-color: #fdf0d5;
 }
 
+/* Stato vuoto */
+.empty-state {
+    grid-column: 1 / -1;
+    justify-self: center;
+    align-self: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px 0;
+    min-height: 320px;
+}
+
+.empty-content {
+    text-align: center;
+}
+
+.empty-icon {
+    margin-bottom: 30px;
+}
+
+.empty-icon i {
+    font-size: 4rem;
+    color: #669bbc;
+}
+
+.empty-content h3 {
+    color: #003049;
+    margin-bottom: 15px;
+}
+
+.empty-content p {
+    color: #669bbc;
+}
+
 .hero-section {
     background-color: #fdf0d5;
     color: #003049;

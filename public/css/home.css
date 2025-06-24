@@ -2,6 +2,7 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: #fdf0d5;
 }
 
 .section-title {
@@ -285,45 +286,77 @@ body {
 }
 
 .titolo-sezione {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: left;
-    margin-bottom: 3rem;
+    padding: 1rem;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
 }
 
 .griglia-progetti {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 2rem;
-    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
 }
 
+/* Card stile progetti/eventi */
 .progetto {
-    flex: 1 1 calc(33% - 2rem);
-    min-width: 280px;
+    border-radius: 0;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 48, 73, 0.06);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.progetto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .img-progetto {
+    border-radius: 0;
+    height: 600px;
+    object-fit: cover; /* Adatta l'immagine */
+    background-color: #f4f4f9;
     width: 100%;
-    height: auto;
-    margin-bottom: 1rem;
-    border: 1px solid #003049;
 }
 
 .titolo-progetto {
-    font-size: 1.2rem;
+    padding: 20px 20px;
+}
+
+.titolo-progetto-link {
+    font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    color: #003049;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.titolo-progetto-link:hover {
+    text-decoration: underline;
+    color: #c1121f;
 }
 
 .descrizione-progetto {
-    font-size: 0.95rem;
-    line-height: 1.6;
+    padding: 0 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.descrizione-progetto .text-muted {
+    color: #669bbc;
 }
 
 .contenitore-bottone {
     text-align: center;
     margin-top: 3rem;
+    margin-bottom: 2rem;
 }
 
 .bottone-trasparente {
@@ -342,45 +375,42 @@ body {
     color: #fff;
 }
 
-@media (max-width: 967px) and (min-width: 769px) {
+/* Responsive */
+@media (max-width: 768px) {
     .griglia-progetti {
-        flex-wrap: wrap;
-        justify-content: center;
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
     }
-
-    .progetto {
-        flex: 1 1 calc(45% - 2rem);
-        max-width: 45%;
-    }
-
-    .titolo-sezione {
-        font-size: 1.8rem;
+    .img-progetto {
+        height: 200px;
     }
 }
 
-@media (max-width: 768px) {
-    .griglia-progetti {
-        flex-direction: column;
-        gap: 2rem;
-    }
+/* Stato vuoto */
+.empty-state {
+    padding: 100px 0;
+}
 
-    .progetto {
-        flex: 1 1 100%;
-    }
+.empty-content {
+    text-align: center;
+}
 
-    .titolo-sezione {
-        font-size: 1.6rem;
-        text-align: center;
-    }
+.empty-icon {
+    margin-bottom: 30px;
+}
 
-    .contenitore-bottone {
-        text-align: center;
-    }
+.empty-icon i {
+    font-size: 4rem;
+    color: #669bbc;
+}
 
-    .bottone-trasparente {
-        width: 100%;
-        max-width: 300px;
-    }
+.empty-content h3 {
+    color: #003049;
+    margin-bottom: 15px;
+}
+
+.empty-content p {
+    color: #669bbc;
 }
 
 /* SEZIONE INFO */
@@ -597,21 +627,27 @@ body {
     color: #c1121f;
 }
 
-.contact-button a {
-    display: inline-block;
+/* Bottone Scrivici */
+.contact-button {
+    margin-top: 2rem;
     padding: 0.75rem 1.5rem;
     border: 2px solid #c1121f;
     background: transparent;
+    font-size: 1.1rem;
     font-weight: bold;
     text-decoration: none;
     color: #c1121f;
     transition: all 0.3s ease;
-    margin-top: 1rem;
 }
 
-.contact-button a:hover {
-    background-color: #780000;
-    border-color: #780000;
+.contact-button i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+.contact-button:hover,
+.contact-button:focus {
+    background: #780000;
+    border: 2px solid #780000;
     color: #ffffff;
 }
 
@@ -637,9 +673,30 @@ body {
         justify-content: center;
     }
 
-    .contact-button a {
+    .contact-button {
         width: 100%;
         max-width: 280px;
         text-align: center;
+        padding: 0.75rem 0;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-header h2 {
+        font-size: 1.1rem;
+    }
+    .contact-header h5 {
+        font-size: 0.92rem;
+    }
+    .contact-info {
+        gap: 1rem;
+    }
+    .contact-social {
+        font-size: 1.2rem;
+    }
+    .contact-button {
+        padding: 0.65rem 0;
+        font-size: 0.97rem;
     }
 }

@@ -20,6 +20,35 @@ body {
     background-color: #fdf0d5;
 }
 
+.empty-state {
+    padding: 100px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.empty-content {
+    text-align: center;
+}
+
+.empty-icon {
+    margin-bottom: 30px;
+}
+
+.empty-icon i {
+    font-size: 4rem;
+    color: #669bbc;
+}
+
+.empty-content h3 {
+    color: #003049;
+    margin-bottom: 15px;
+}
+
+.empty-content p {
+    color: #669bbc;
+}
+
 /* ========================================
    HERO SECTION
    ======================================== */

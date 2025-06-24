@@ -1,4 +1,4 @@
-<div id="videoContainer" class="video-container">
+<div id="videoContainer" class="video-container recognition-section">
     @forelse($videos as $video)
         <div class="video-card"
             data-title="{{ $video->titolo }}" 
@@ -15,7 +15,7 @@
                         onerror="this.onerror=null; this.src='/path/to/fallback-image.jpg';"
                     >
                     <div class="overlay">
-                        <div class="play-icon"><i class="fa-solid fa-play"></i></div> {{-- Play simbolo (HTML) --}}
+                        <div class="play-icon"><i class="fa-solid fa-play"></i></div>
                     </div>
                 </a>
                 <div class="card-body">
@@ -32,12 +32,15 @@
             </div>
         </div>
     @empty
-        <p class="no-videos">Nessun video trovato.</p>
+        <div class="empty-state">
+            <div class="empty-content">
+                <div class="empty-icon">
+                    <i class="fa-solid fa-film"></i>
+                </div>
+                <h3>Nessun video disponibile</h3>
+                <p>Al momento non ci sono video pubblicati.<br>
+                Torna presto per scoprire nuovi contenuti!</p>
+            </div>
+        </div>
     @endforelse
-</div>
-
-<div class="section-divider"></div>
-
-<div class="pagination-container">
-    {{ $videos->links('pagination::bootstrap-4') }}
 </div>

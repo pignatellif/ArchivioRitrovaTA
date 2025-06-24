@@ -1,4 +1,4 @@
-@foreach($series as $serie)
+@forelse($series as $serie)
 <div class="series-block">
     <h2 class="series-title">{{ $serie->nome }}</h2>
     <p class="series-description">{{ $serie->descrizione }}</p>
@@ -39,9 +39,19 @@
             <i class="fa-solid fa-caret-right"></i>
         </button>
     </div>
-
 </div>
-@endforeach
+@empty
+    <div class="empty-state recognition-section">
+        <div class="empty-content">
+            <div class="empty-icon">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <h3>Nessuna serie disponibile</h3>
+            <p>Attualmente non ci sono serie pubblicate.<br>
+            Torna presto per scoprire nuove raccolte di video!</p>
+        </div>
+    </div>
+@endforelse
 
 <div class="pagination">
     {{ $series->links() }}

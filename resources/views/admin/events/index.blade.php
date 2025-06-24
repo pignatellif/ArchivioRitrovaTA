@@ -48,6 +48,9 @@
                             <a href="{{ route('events.edit', $event->id) }}" class="btn btn-warning btn-sm" title="Modifica">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            <a href="{{ route('events.contents.create', $event->id) }}" class="btn btn-info btn-sm" title="Gestisci Contenuto">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </a>
                             <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')

@@ -29,20 +29,24 @@
 
 <div class="section-divider"></div>
 
-<section class="progetti">
-    <h2 class="titolo-sezione">I nostri progetti</h2>
+<section class="event-section recognition-section">
+    <h2 class="titolo-sezione">I nostri eventi</h2>
     <div class="griglia-progetti">
-        @foreach($recentEvents as $event)
+        @forelse($recentEvents as $event)
             <div class="progetto">
                 @if($event->cover_image)
                     <img src="{{ asset($event->cover_image) }}" alt="Copertina di {{ $event->titolo }}" class="img-progetto">
                 @else
                     <img src="{{ asset('images/default-cover.jpg') }}" alt="Copertina di default" class="img-progetto">
                 @endif
-                <h3 class="titolo-progetto">{{ $event->titolo }}</h3>
+                <h3 class="titolo-progetto">
+                    <a href="{{ route('eventi.show', $event->id) }}" class="titolo-progetto-link">
+                        {{ $event->titolo }}
+                    </a>
+                </h3>
                 <p class="descrizione-progetto">
                     {{ \Illuminate\Support\Str::limit($event->descrizione, 150, '...') }}<br><br>
-                    <strong>Data:</strong> 
+                    <strong>Data:</strong>
                     {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }}
                     @if($event->end_date)
                         - {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
@@ -51,10 +55,20 @@
                     <strong>Luogo:</strong> {{ $event->luogo }}
                 </p>
             </div>
-        @endforeach
-    </div>
-    <div class="contenitore-bottone">
-        <a href="{{ route('eventi') }}" class="bottone-trasparente">Sfoglia tutti gli eventi</a>
+            <div class="contenitore-bottone">
+                <a href="{{ route('eventi') }}" class="bottone-trasparente">Sfoglia tutti gli eventi</a>
+            </div>
+        @empty
+            <div class="empty-state">
+                <div class="empty-content">
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                    <h3>Nessun evento disponibile</h3>
+                    <p>Stiamo lavorando per pubblicare i primi eventi.<br>Resta sintonizzato!</p>
+                </div>
+            </div>
+        @endforelse
     </div>
 </section>
 
@@ -94,15 +108,15 @@
 
 <section class="archive-section fixed-order">
     <div class="archive-half image">
-        <img src="{{ asset('img/home/image2.png') }}" alt="Archivio" class="archive-image">
+        <img src="{{ asset('img/home/image2.png') }}" alt="Serie" class="archive-image">
     </div>
     <div class="archive-half text">
         <h4>Serie</h4>
-        <h2>Ogni filmato è una storia che torna a vivere</h2>
+        <h2>Storie che si intrecciano in episodi</h2>
         <p>
-            Nel nostro Archivio trovi ricordi in movimento: frammenti di vita pugliese, custoditi e restituiti alla comunità. Una finestra sul passato, da esplorare e riconoscere.
+            Esplora le nostre serie: racconti tematici che uniscono i filmini di famiglia in un viaggio unico. Ogni episodio è un frammento di memoria che prende vita.
         </p>
-        <a href="{{ route('serie') }}" class="archive-button">Esplora le Serie</a>
+        <a href="{{ route('serie') }}" class="archive-button">Scopri le Serie</a>
     </div>
 </section>
 
@@ -151,13 +165,13 @@
             <p class="contact-detail"><i class="fa-solid fa-phone"></i> +39 3928783002</p>
             <p class="contact-detail"><i class="fa-solid fa-paper-plane"></i> <a href="mailto:inforitrovata@gmail.com">inforitrovata@gmail.com</a></p>
             <div class="contact-social">
-                <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/ArchivioRitrovata" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://www.instagram.com/ArchivioRitrovata" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/ArchivioRitrovata" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
             </div>
-            <div class="contact-button">
-                <a href="mailto:inforitrovata@gmail.com">Scrivici</a>
-            </div>
+            <a href="mailto:inforitrovata@gmail.com" class="contact-button" aria-label="Scrivici via email">
+                <i class="fa-solid fa-envelope"></i> Scrivici
+            </a>
         </div>
     </div>
 </section>

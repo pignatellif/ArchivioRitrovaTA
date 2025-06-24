@@ -364,19 +364,56 @@ class SectionController extends Controller
     public function eventi(Request $request)
     {
         $query = $request->input('query');
-        $events = Evento::query();
-
+        $today = now()->toDateString();
+    
+        $baseQuery = Evento::query();
+    
         if ($query) {
-            $events = $events->where('titolo', 'like', '%' . $query . '%')
-                             ->orWhere('descrizione', 'like', '%' . $query . '%')
-                             ->orWhere('start_date', 'like', '%' . $query . '%')
-                             ->orWhere('end_date', 'like', '%' . $query . '%')
-                             ->orWhere('luogo', 'like', '%' . $query . '%');
+            $baseQuery = $baseQuery->where(function($q) use ($query) {
+                $q->where('titolo', 'like', '%' . $query . '%')
+                  ->orWhere('descrizione', 'like', '%' . $query . '%')
+                  ->orWhere('start_date', 'like', '%' . $query . '%')
+                  ->orWhere('end_date', 'like', '%' . $query . '%')
+                  ->orWhere('luogo', 'like', '%' . $query . '%');
+            });
         }
+    
+        // Imminenti: end_date nel futuro OPPURE (end_date nullo e start_date >= oggi)
+        $imminenti = (clone $baseQuery)
+            ->where(function ($q) use ($today) {
+                $q->where('end_date', '>=', $today)
+                  ->orWhere(function($q2) use ($today) {
+                      $q2->whereNull('end_date')->where('start_date', '>=', $today);
+                  });
+            })
+            ->orderBy('start_date')
+            ->paginate(12, ['*'], 'imminenti');
+    
+        // Passati: end_date minore di oggi OPPURE (end_date nullo e start_date < oggi)
+        $passati = (clone $baseQuery)
+            ->where(function ($q) use ($today) {
+                $q->where('end_date', '<', $today)
+                  ->orWhere(function($q2) use ($today) {
+                      $q2->whereNull('end_date')->where('start_date', '<', $today);
+                  });
+            })
+            ->orderByDesc('start_date')
+            ->paginate(12, ['*'], 'passati');
+    
+        return view('sections.eventi', compact('imminenti', 'passati', 'query'));
+    }
 
-        $events = $events->paginate(12);
-
-        return view('sections.eventi', compact('events'));
+    public function eventiShow($id)
+    {
+        // Recupera l'evento e i suoi contents ordinati per 'order'
+        $evento = Evento::with(['contents' => function($query) {
+            $query->orderBy('order');
+        }])->findOrFail($id);
+    
+        // Adesso $evento->contents è già ordinato!
+        $contents = $evento->contents;
+    
+        return view('sections.eventi-show', compact('evento', 'contents'));
     }
 
     public function info()

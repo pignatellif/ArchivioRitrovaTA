@@ -41,9 +41,18 @@
                     @endforeach
                 </div>
             @endif
-        @empty
-            <p class="text-center">Nessun autore trovato.</p>
-        @endforelse
+            @empty
+                <div class="empty-state recognition-section">
+                    <div class="empty-content">
+                        <div class="empty-icon">
+                            <i class="fa-solid fa-user-pen"></i>
+                        </div>
+                        <h3>Nessun autore trovato</h3>
+                        <p>Al momento non ci sono autori disponibili nell’archivio.<br>
+                        Torna presto per scoprire nuove storie e nuovi protagonisti!</p>
+                    </div>
+                </div>
+            @endforelse
     </div>
 </section>
 @endsection

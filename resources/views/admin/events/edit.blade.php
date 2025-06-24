@@ -14,11 +14,11 @@
         <textarea name="descrizione" class="form-control">{{ old('descrizione', $event->descrizione) }}</textarea>
 
         <label for="start_date">Data di Inizio:</label>
-        <input type="date" name="start_date" class="form-control" value="{{ old('start_date', $event->start_date->format('Y-m-d')) }}" required>
+        <input type="date" name="start_date" class="form-control" value="{{ old('start_date', $event->start_date ? $event->start_date->format('Y-m-d') : '') }}" required>
 
         <label for="end_date">Data di Fine:</label>
-        <input type="date" name="end_date" class="form-control" value="{{ old('end_date', optional($event->end_date)->format('Y-m-d')) }}">
-
+        <input type="date" name="end_date" class="form-control" value="{{ old('end_date', $event->end_date ? $event->end_date->format('Y-m-d') : '') }}">
+        
         <label for="luogo">Luogo di Svolgimento:</label>
         <input type="text" name="luogo" class="form-control" value="{{ old('luogo', $event->luogo) }}" required>
 

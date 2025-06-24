@@ -11,6 +11,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\RiconoscimentoController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\EventContentController;
 
 use Illuminate\Http\Request;
 
@@ -26,6 +27,7 @@ Route::controller(SectionController::class)->group(function () {
     Route::get('/fuori-dal-frame', 'fuoriDalFrame')->name('fuori_dal_frame');
     Route::get('/fuori-dal-tacco', 'fuoriDalTacco')->name('fuori_dal_tacco');
     Route::get('/eventi', 'eventi')->name('eventi');
+    Route::get('/eventi/{id}', 'eventiShow')->name('eventi.show');
     Route::get('/chi-siamo', 'info')->name('chi_siamo');
     Route::get('/fuori-dal-frame/autori', 'autori')->name('autori');
     Route::get('/fuori-dal-frame/autori/{id}', 'showAutore')->name('autore.show');
@@ -81,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     // EVENTI
     // ==========================
     Route::prefix('admin/events')->name('events.')->group(function () {
+        // === CRUD EVENTI ===
         Route::get('/', [EventController::class, 'index'])->name('index');                  // Lista
         Route::get('/create', [EventController::class, 'create'])->name('create');          // Form creazione
         Route::post('/', [EventController::class, 'store'])->name('store');                 // Salvataggio
@@ -88,6 +91,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{event}', [EventController::class, 'update'])->name('update');         // Aggiornamento
         Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');    // Eliminazione
         Route::delete('/{event}/remove-cover-image', [EventController::class, 'removeCoverImage'])->name('removeCoverImage');
+
+        // === CONTENTS degli eventi ===
+        Route::get('/{event}/contents/create', [EventContentController::class, 'create'])->name('contents.create');
+        Route::post('/{event}/contents', [EventContentController::class, 'store'])->name('contents.store');
+        Route::put('/{event}/contents/{content}', [EventContentController::class, 'update'])->name('contents.update');
+        Route::delete('/{event}/contents/{content}', [EventContentController::class, 'destroy'])->name('contents.destroy');
+        // Aggiungi questa rotta per il riordinamento dei contenuti
+        Route::post('/{event}/contents/reorder', [EventContentController::class, 'reorder'])->name('contents.reorder');
     });
 
     // ==========================
