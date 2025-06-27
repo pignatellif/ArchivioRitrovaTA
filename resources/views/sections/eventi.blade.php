@@ -51,7 +51,7 @@
                                 {{ $event->titolo }}
                             </a>
                         </h5>
-                        <p class="card-text">{{ $event->descrizione }}</p>
+                        <p class="card-text">{{ Str::limit($event->descrizione, 150, '...') }}</p>
                         <p class="card-text">
                             <small class="text-muted">
                                 Dal {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }}
@@ -98,7 +98,7 @@
                                 {{ $event->titolo }}
                             </a>
                         </h5>
-                        <p class="card-text">{{ $event->descrizione }}</p>
+                        <p class="card-text">{{ Str::limit($event->descrizione, 150, '...') }}</p>
                         <p class="card-text">
                             <small class="text-muted">
                                 Dal {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }}

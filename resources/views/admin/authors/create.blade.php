@@ -1,56 +1,104 @@
 @extends('layouts.admin')
 
 @section('content')
-    <h2>Aggiungi Nuovo Autore</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <strong>Attenzione!</strong> Correggi gli errori seguenti:<br><br>
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <h2 class="mb-0"><i class="fas fa-user-plus me-2 text-primary"></i>Aggiungi Nuovo Autore</h2>
+                <a href="{{ route('authors.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Torna agli Autori
+                </a>
+            </div>
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong><i class="fas fa-exclamation-triangle me-2"></i>Attenzione!</strong> Correggi i seguenti errori:
+                    <ul class="mb-0 mt-2">
+                        @foreach($errors->all() as $error)
+                            <li class="small">{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+                </div>
+            @endif
+
+            <form action="{{ route('authors.store') }}" method="POST" enctype="multipart/form-data" class="card shadow-sm">
+                @csrf
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label fw-bold">Nome <span class="text-danger">*</span></label>
+                        <input type="text" name="nome" id="nome" class="form-control @error('nome') is-invalid @enderror" value="{{ old('nome') }}" required maxlength="255" placeholder="Nome autore">
+                        @error('nome')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="anno_nascita" class="form-label fw-bold">Anno di Nascita</label>
+                        <input type="number" name="anno_nascita" id="anno_nascita" class="form-control @error('anno_nascita') is-invalid @enderror" value="{{ old('anno_nascita') }}" min="1800" max="{{ date('Y') + 1 }}" placeholder="es. 1980">
+                        @error('anno_nascita')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="biografia" class="form-label fw-bold">Biografia</label>
+                        <textarea name="biografia" id="biografia" rows="5" maxlength="2000" class="form-control @error('biografia') is-invalid @enderror" placeholder="Breve biografia">{{ old('biografia') }}</textarea>
+                        @error('biografia')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Max 2000 caratteri</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formati" class="form-label fw-bold">Formati associati</label>
+                        <select name="formati[]" id="formati" class="form-select @error('formati') is-invalid @enderror" multiple>
+                            @foreach($formati as $formato)
+                                <option value="{{ $formato->id }}"
+                                    {{ collect(old('formati'))->contains($formato->id) ? 'selected' : '' }}>
+                                    {{ $formato->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">Tieni premuto <b>CTRL</b> (Windows) o <b>CMD</b> (Mac) per selezionare più formati.</small>
+                        @error('formati')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="immagine_profilo" class="form-label fw-bold">Immagine del Profilo</label>
+                        <input type="file" name="immagine_profilo" id="immagine_profilo" class="form-control @error('immagine_profilo') is-invalid @enderror" accept="image/*">
+                        @error('immagine_profilo')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Opzionale. JPG, PNG, max 2MB.</div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light text-end">
+                    <a href="{{ route('authors.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times me-1"></i>Annulla
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Crea Autore
+                    </button>
+                </div>
+            </form>
         </div>
-    @endif
-
-    <form action="{{ route('authors.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" name="nome" id="nome" class="form-control" value="{{ old('nome') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="anno_nascita" class="form-label">Anno di Nascita</label>
-            <input type="number" name="anno_nascita" id="anno_nascita" class="form-control" value="{{ old('anno_nascita') }}">
-        </div>
-
-        <div class="mb-3">
-            <label for="biografia" class="form-label">Biografia</label>
-            <textarea name="biografia" id="biografia" rows="5" class="form-control">{{ old('biografia') }}</textarea>
-        </div>
-
-        <div class="mb-3">
-            <label for="formati" class="form-label">Formati associati</label>
-            <select name="formati[]" id="formati" class="form-select" multiple>
-                @foreach($formati as $formato)
-                    <option value="{{ $formato->id }}"
-                        {{ collect(old('formati'))->contains($formato->id) ? 'selected' : '' }}>
-                        {{ $formato->nome }}
-                    </option>
-                @endforeach
-            </select>
-            <small class="form-text text-muted">Tieni premuto CTRL o CMD per selezionare più formati</small>
-        </div>
-
-        <div class="mb-3">
-            <label for="immagine_profilo" class="form-label">Immagine del Profilo</label>
-            <input type="file" name="immagine_profilo" id="immagine_profilo" class="form-control">
-        </div>
-
-        <button type="submit" class="btn btn-primary">Crea Autore</button>
-        <a href="{{ route('authors.index') }}" class="btn btn-secondary">Annulla</a>
-    </form>
+    </div>
+</div>
 @endsection
+
+@push('styles')
+<style>
+    .card { border-radius: 0.75rem; }
+    .form-label.fw-bold { color: #495057; }
+    .form-control:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.09);}
+    .alert { border-radius: 0.6rem; border: none; }
+    .btn { border-radius: 0.5rem; font-weight: 500; }
+    .card-footer { border-radius: 0 0 0.75rem 0.75rem; }
+</style>
+@endpush

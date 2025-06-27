@@ -85,9 +85,9 @@
                 </div>
                 <ul class="social-links">
                     <li><a href="https://www.youtube.com/@ArchivioRitrovaTA" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a></li>
-                    <li><a href="https://www.facebook.com/ArchivioRitrovaTA" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a></li>
+                    <li><a href="https://www.facebook.com/people/Archivio-Ritrovata/100091771725483/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a></li>
                     <li><a href="https://www.instagram.com/ArchivioRitrovaTA" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
-                    <li><a href="https://www.linkedin.com/company/ArchivioRitrovaTA" target="_blank" aria-label="Linkedin"><i class="fab fa-linkedin"></i></a></li>
+                    <li><a href="https://www.linkedin.com/in/archivio-ritrovata-385bb12b8/" target="_blank" aria-label="Linkedin"><i class="fab fa-linkedin"></i></a></li>
                 </ul>
                 <p class="copyright">
                     &copy; 2025 Archivio RitrovaTA. Tutti i diritti riservati.

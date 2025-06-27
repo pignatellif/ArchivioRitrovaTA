@@ -29,65 +29,88 @@ class VideoController extends Controller
             'series' => Serie::all(),
             'tags' => Tag::all(),
         ]);
-    }   
-
-    private function nominatimRequest($query, $additionalParams = [])
-    {
-        $params = array_merge([
-            'q' => $query,
-            'format' => 'json',
-            'limit' => 1,
-        ], $additionalParams);
-
-        return Http::withHeaders([
-            'User-Agent' => 'ArchivioRitrovata/1.0 (admin@archivioritrovata.it)'
-        ])->get('https://nominatim.openstreetmap.org/search', $params);
     }
-    
-    private function getOrCreateLocation($locationName)
+
+    /**
+     * API endpoint per cercare location su OSM/Nominatim
+     */
+    public function searchLocations(Request $request)
     {
-        $lowerLocationName = strtolower(trim($locationName));
-    
-        // 1. Ricerca globale
-        $response = $this->nominatimRequest($lowerLocationName, ['limit' => 5]);
-        $results = $response->json();
-        foreach ($results as $result) {
-            if (
-                isset($result['type']) &&
-                in_array($result['type'], ['city', 'town', 'village', 'hamlet', 'country'])
-            ) {
-                return Location::firstOrCreate(
-                    ['name' => $locationName],
-                    ['lat' => $result['lat'], 'lon' => $result['lon']]
-                );
+        $query = $request->input('query');
+        if (empty($query) || strlen($query) < 2) {
+            return response()->json([
+                'success' => false,
+                'results' => [],
+                'message' => 'Query troppo corta'
+            ]);
+        }
+
+        try {
+            // Chiamata diretta a Nominatim
+            $response = Http::withHeaders([
+                'User-Agent' => 'ArchivioRitrovata/1.0 (admin@archivioritrovata.it)'
+            ])->get('https://nominatim.openstreetmap.org/search', [
+                'q' => $query,
+                'format' => 'json',
+                'addressdetails' => 1,
+                'extratags' => 1,
+                'limit' => 12,
+                'accept-language' => 'it,en'
+            ]);
+
+            $results = $response->json();
+
+            // Prepara i dati da restituire al frontend (tutti i risultati)
+            $formatted = [];
+            foreach ($results as $item) {
+                $formatted[] = [
+                    'place_id' => $item['place_id'],
+                    'osm_type' => $item['osm_type'] ?? null,
+                    'osm_id' => $item['osm_id'] ?? null,
+                    'display_name' => $item['display_name'],
+                    'name' => $this->getBestDisplayName($item, $query),
+                    'type' => $item['type'] ?? null,
+                    'lat' => $item['lat'],
+                    'lon' => $item['lon'],
+                    'country' => $item['address']['country'] ?? '',
+                    'state' => $item['address']['state'] ?? null,
+                    'county' => $item['address']['county'] ?? null,
+                    'importance' => $item['importance'] ?? 0,
+                ];
             }
+
+            return response()->json([
+                'success' => true,
+                'results' => $formatted
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'results' => [],
+                'message' => 'Errore nella ricerca: ' . $e->getMessage()
+            ]);
         }
-    
-        // 2. Ricerca limitata all’Italia
-        $response = $this->nominatimRequest($locationName, ['countrycodes' => 'IT', 'limit' => 5]);
-        $results = $response->json();
-        foreach ($results as $result) {
-            if (
-                isset($result['type']) &&
-                in_array($result['type'], ['city', 'town', 'village', 'hamlet'])
-            ) {
-                return Location::firstOrCreate(
-                    ['name' => $locationName],
-                    ['lat' => $result['lat'], 'lon' => $result['lon']]
-                );
-            }
+    }
+
+    /**
+     * Sceglie il miglior nome da mostrare dalla risposta Nominatim
+     */
+    private function getBestDisplayName($result, $originalQuery)
+    {
+        // Preferisci il campo name, altrimenti la prima parte del display_name
+        if (isset($result['name']) && !empty($result['name'])) {
+            return $result['name'];
         }
-    
-        // 3. Fallback: usa comunque il primo risultato disponibile (globale o italiano)
-        if (!empty($results)) {
-            return Location::firstOrCreate(
-                ['name' => $locationName],
-                ['lat' => $results[0]['lat'], 'lon' => $results[0]['lon']]
-            );
-        }
-    
-        throw new \Exception("Impossibile trovare le coordinate per la località: $locationName. Verifica che il nome sia corretto.");
-    } 
+        $parts = explode(',', $result['display_name']);
+        return trim($parts[0]);
+    }
+
+    private function getOrCreateLocationById($name, $lat, $lon)
+    {
+        return Location::firstOrCreate(
+            ['name' => $name, 'lat' => $lat, 'lon' => $lon]
+        );
+    }
 
     /**
      * Estrae l'ID YouTube da un URL YouTube
@@ -182,8 +205,16 @@ class VideoController extends Controller
             $formatoId = $formato->id;
         }
 
-        // Trova o crea la location con lat/lon
-        $location = $this->getOrCreateLocation(trim($request->input('location')));
+        // Gestione della location con coordinate specifiche
+        if (!$request->input('location_lat') || !$request->input('location_lon')) {
+            return back()->withErrors(['location' => 'Devi selezionare una location dalla lista dei suggerimenti.']);
+        }
+
+        $location = $this->getOrCreateLocationById(
+            trim($request->input('location')),
+            $request->input('location_lat'),
+            $request->input('location_lon')
+        );
 
         // Prepara dati per la validazione
         $validated = $request->validate([
@@ -201,7 +232,8 @@ class VideoController extends Controller
                 },
             ],
             'location' => 'required|string',
-            // Gli altri campi sono gestiti sopra
+            'location_lat' => 'required|numeric',
+            'location_lon' => 'required|numeric',
         ]);
 
         // Estrai l'ID YouTube (se è un URL) o usa l'ID se è già un ID
@@ -273,8 +305,16 @@ class VideoController extends Controller
             $formatoId = $formato->id;
         }
 
-        // Trova o crea la location con lat/lon
-        $location = $this->getOrCreateLocation(trim($request->input('location')));
+        // Gestione della location con coordinate specifiche
+        if (!$request->input('location_lat') || !$request->input('location_lon')) {
+            return back()->withErrors(['location' => 'Devi selezionare una location dalla lista dei suggerimenti.']);
+        }
+
+        $location = $this->getOrCreateLocationById(
+            trim($request->input('location')),
+            $request->input('location_lat'),
+            $request->input('location_lon')
+        );
 
         // Prepara dati per la validazione
         $validated = $request->validate([
@@ -292,7 +332,8 @@ class VideoController extends Controller
                 },
             ],
             'location' => 'required|string',
-            // Gli altri campi sono gestiti sopra
+            'location_lat' => 'required|numeric',
+            'location_lon' => 'required|numeric',
         ]);
 
         // Estrai l'ID YouTube (se è un URL) o usa l'ID se è già un ID
@@ -324,4 +365,24 @@ class VideoController extends Controller
 
         return redirect()->route('videos.index')->with('success', 'Video eliminato con successo!');
     }
+
+    public function details($id)
+    {
+        $video = \App\Models\Video::with(['autore', 'formato', 'location', 'series', 'famiglie', 'tags'])->findOrFail($id);
+    
+        return response()->json([
+            'titolo' => $video->titolo,
+            'anno' => $video->anno,
+            'durata' => sprintf('%d:%02d', intdiv($video->durata_secondi, 60), $video->durata_secondi % 60),
+            'autore' => $video->autore?->nome,
+            'formato' => $video->formato?->nome,
+            'location' => $video->location?->name,
+            'series' => $video->series->pluck('nome')->implode(', '),
+            'famiglie' => $video->famiglie->pluck('nome')->implode(', '),
+            'tags' => $video->tags->pluck('nome')->implode(', '),
+            'descrizione' => $video->descrizione,
+            'thumbnail_url' => $video->thumbnail_url, // <-- AGGIUNGI QUESTA RIGA
+        ]);
+    }
+
 }

@@ -7,10 +7,16 @@
 @section('content')
 
 <div class="hero-section">
+    <video autoplay loop muted playsinline class="hero-bg-video">
+        <source src="/img/home/home-gif.mp4" type="video/mp4" />
+        Il tuo browser non supporta il video HTML5.
+    </video>
     <div class="hero-overlay">
         <h1 class="hero-title">Archivio Ritrovata</h1>
         <hr class="hero-divider">
-        <p class="hero-subtitle">Nel silenzio dei filmini, la voce di chi eravamo.</p>
+        <p class="hero-subtitle">
+            <span id="typewriter" class="typewriter"></span>
+        </p>
         <a href="#welcome-section" class="hero-button">Scopri l'archivio</a>
     </div>
 </div>
@@ -31,7 +37,7 @@
 
 <section class="event-section recognition-section">
     <h2 class="titolo-sezione">I nostri eventi</h2>
-    <div class="griglia-progetti">
+    <div class="griglia-progetti" data-count="{{ $recentEvents->count() }}">
         @forelse($recentEvents as $event)
             <div class="progetto">
                 @if($event->cover_image)
@@ -44,19 +50,16 @@
                         {{ $event->titolo }}
                     </a>
                 </h3>
-                <p class="descrizione-progetto">
-                    {{ \Illuminate\Support\Str::limit($event->descrizione, 150, '...') }}<br><br>
-                    <strong>Data:</strong>
-                    {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }}
-                    @if($event->end_date)
-                        - {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
-                    @endif
-                    <br>
-                    <strong>Luogo:</strong> {{ $event->luogo }}
-                </p>
-            </div>
-            <div class="contenitore-bottone">
-                <a href="{{ route('eventi') }}" class="bottone-trasparente">Sfoglia tutti gli eventi</a>
+                <p class="descrizione-progetto">{{ Str::limit($event->descrizione, 150, '...') }}</p>
+                    <p class="descrizione-progetto">
+                        <small class="text-muted">
+                            Dal {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y') }}
+                            @if($event->end_date)
+                                al {{ \Carbon\Carbon::parse($event->end_date)->format('d/m/Y') }}
+                            @endif
+                        </small>
+                    </p>
+                <p class="descrizione-progetto"><strong>Luogo:</strong> {{ $event->luogo }}</p>
             </div>
         @empty
             <div class="empty-state">
@@ -69,6 +72,12 @@
                 </div>
             </div>
         @endforelse
+        
+        @if($recentEvents->count() > 0)
+            <div class="contenitore-bottone">
+                <a href="{{ route('eventi') }}" class="bottone-trasparente">Sfoglia tutti gli eventi</a>
+            </div>
+        @endif
     </div>
 </section>
 
@@ -165,9 +174,9 @@
             <p class="contact-detail"><i class="fa-solid fa-phone"></i> +39 3928783002</p>
             <p class="contact-detail"><i class="fa-solid fa-paper-plane"></i> <a href="mailto:inforitrovata@gmail.com">inforitrovata@gmail.com</a></p>
             <div class="contact-social">
-                <a href="https://www.facebook.com/ArchivioRitrovata" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                <a href="https://www.instagram.com/ArchivioRitrovata" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.linkedin.com/ArchivioRitrovata" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/people/Archivio-Ritrovata/100091771725483/" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://www.instagram.com/ArchivioRitrovaTA" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/archivio-ritrovata-385bb12b8/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
             </div>
             <a href="mailto:inforitrovata@gmail.com" class="contact-button" aria-label="Scrivici via email">
                 <i class="fa-solid fa-envelope"></i> Scrivici

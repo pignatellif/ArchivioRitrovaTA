@@ -65,6 +65,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{video}/edit', [VideoController::class, 'edit'])->name('edit');  
         Route::put('/{video}', [VideoController::class, 'update'])->name('update');  
         Route::delete('/{video}', [VideoController::class, 'destroy'])->name('destroy');  
+        Route::get('/search-locations', [VideoController::class, 'searchLocations'])->name('search-locations');
+        Route::get('/{id}/details', [VideoController::class, 'details'])->name('details');
     });    
 
     // ==========================

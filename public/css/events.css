@@ -23,7 +23,7 @@ body {
     position: relative;
     width: 100vw;
     height: 50vh;
-    background-image: url("/img/progetti.png");
+    background-image: url("/img/progetti.jpg");
     background-size: cover;
     background-position: center;
     display: flex;
@@ -219,16 +219,16 @@ body {
 
 .event-section .card-body {
     background-color: #fdf0d5;
-    height: 300px;
+    height: 200px;
     padding: 20px;
 }
 
 .event-section .card-title a {
     font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #003049;
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 .event-section .card-title a:hover {

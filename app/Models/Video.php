@@ -40,4 +40,21 @@ class Video extends Model
     {
         return $this->belongsTo(Formato::class);
     }
+
+    public function getThumbnailUrlAttribute()
+    {
+        // Se hai una colonna 'thumbnail_url' che contiene già l'URL assoluto:
+        if (!empty($this->attributes['thumbnail_url'])) {
+            return $this->attributes['thumbnail_url'];
+        }
+        // Oppure se salvi solo il nome file su storage pubblico
+        if (!empty($this->attributes['thumbnail'])) {
+            return asset('storage/' . $this->attributes['thumbnail']);
+        }
+        // Fallback: se hai youtube_id e vuoi la thumb da YouTube
+        if ($this->youtube_id) {
+            return "https://img.youtube.com/vi/{$this->youtube_id}/hqdefault.jpg";
+        }
+        return null;
+    }
 }
