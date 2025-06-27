@@ -37,7 +37,7 @@ Route::controller(SectionController::class)->group(function () {
 
 
 // API Resource per i video
-Route::apiResource('videos', VideoController::class);
+// Route::apiResource('videos', VideoController::class);
 
 // ==========================
 // AUTENTICAZIONE
