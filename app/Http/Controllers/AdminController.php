@@ -10,6 +10,12 @@ use App\Models\Autore;
 use App\Models\Riconoscimento;
 use Carbon\Carbon;
 
+use PragmaRX\Google2FA\Google2FA;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Writer;
+
 class AdminController extends Controller
 {
 
@@ -234,4 +240,69 @@ class AdminController extends Controller
 
         return response()->json($recentActivities);
     }
+
+    public function showProfile(Request $request)
+    {
+        $user = $request->user();
+        return view('admin.profile', compact('user'));
+    }
+    
+    public function updateEmail(Request $request)
+    {
+        $user = $request->user();
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+    
+        $user->email = $request->email;
+        $user->save();
+    
+        return redirect()->route('admin.profile')->with('success', 'Email aggiornata con successo.');
+    }
+    
+    public function updatePassword(Request $request)
+    {
+        $user = $request->user();
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+    
+        $user->password = bcrypt($request->password);
+        $user->save();
+    
+        return redirect()->route('admin.profile')->with('success', 'Password aggiornata con successo.');
+    }
+
+    public function showTwoFactor()
+    {
+        $user = auth()->user();
+
+        $qrCodeSvg = null;
+        $recoveryCodes = null;
+        
+        if ($user->two_factor_secret) {
+            $google2fa = app(\PragmaRX\Google2FA\Google2FA::class);
+
+            $qrCodeUrl = $google2fa->getQRCodeUrl(
+                config('app.name'),
+                $user->email,
+                decrypt($user->two_factor_secret)
+            );
+
+            $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                new \BaconQrCode\Renderer\RendererStyle\RendererStyle(200),
+                new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+            );
+            $writer = new \BaconQrCode\Writer($renderer);
+            $qrCodeSvg = $writer->writeString($qrCodeUrl);
+            
+            // Decodifica i codici di recupero
+            if ($user->two_factor_recovery_codes) {
+                $recoveryCodes = json_decode(decrypt($user->two_factor_recovery_codes), true);
+            }
+        }
+
+        return view('admin.two-factor-authentication', compact('user', 'qrCodeSvg', 'recoveryCodes'));
+    }
+
 }

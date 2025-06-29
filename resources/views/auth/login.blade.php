@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
+<h2 style="color: red">LOGIN CUSTOM VIEW</h2>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

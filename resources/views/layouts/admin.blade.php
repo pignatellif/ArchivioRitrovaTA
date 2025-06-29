@@ -14,10 +14,15 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">RitrovaTA Admin</a>
-            <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                @csrf
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('admin.profile') }}" class="btn btn-outline-light">
+                    <i class="fa fa-user"></i> Profilo
+                </a>
+                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
         </div>
     </nav>
 
